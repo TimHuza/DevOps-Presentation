@@ -135,12 +135,25 @@ Got it — you want a **clean, logical slide/content plan** that maps directly t
 ## 12. Python
 
 * Why Python in DevOps?
-* Automation with Python
-* Working with APIs
-* File Handling and Scripting
+* DataTypes
+ * List
+ * Dict
+ * Tuples
+ * Sets
+ * Strings
+ * Integers
+ * Float
+ * Booleans
+* Control Statements
+    * If
+    * Else
+    * Elif
+* Loops
+    * For
+    * While
+* Functions
+* Modules
 * Using Python in CI/CD Pipelines
-* Popular Libraries (Requests, Paramiko)
-* Example Use Cases (Automation scripts, monitoring)
 
 ---
 
