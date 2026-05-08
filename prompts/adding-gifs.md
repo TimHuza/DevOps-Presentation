@@ -1,0 +1,1 @@
+I added some funny and cool gifs in `static/gifs/` folder. Can you add them related to the topic so if it is `linux` folder then add those gifs to linux and etc. Don't change anything don't remove images just add the giffs at the bottom of the images!

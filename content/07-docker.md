@@ -37,6 +37,8 @@ Main components:
 - **Docker Client** → where you run commands
 - **Docker Daemon** → runs containers
 - **Docker Registry** → stores images (e.g., Docker Hub)
+- **Docker Repository** → collection of image versions/tags
+- **Docker Host** → machine where Docker runs
 
 Flow:
 
@@ -74,12 +76,19 @@ CMD ["python", "app.py"]
 
 ## 💻 Basic Docker Commands
 
-| Command        | Description     |
-| -------------- | --------------- |
-| `docker build` | Build image     |
-| `docker run`   | Run container   |
-| `docker ps`    | List containers |
-| `docker pull`  | Download image  |
+| Command             | Description                 |
+| ------------------- | --------------------------- |
+| `docker build`           | Build image                 |
+| `docker run`             | Run container               |
+| `docker ps`              | List containers             |
+| `docker pull`            | Download image              |
+| `docker create`          | Create container only       |
+| `docker start`           | Start existing container    |
+| `docker stop`            | Stop running container      |
+| `docker images`          | List images                 |
+| `docker rm`              | Remove container            |
+| `docker rmi`             | Remove image                |
+| `docker container prune` | Remove stopped containers   |
 
 ### Example:
 

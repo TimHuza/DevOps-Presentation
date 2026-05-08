@@ -16,6 +16,65 @@ A pipeline is a **series of automated steps** to deliver software.
 
 💡 Everything in DevOps is automated using code
 
+### 📄 What is a Jenkinsfile?
+
+A **Jenkinsfile** is a file that defines the pipeline steps Jenkins should run.
+
+It contains instructions like:
+- how to build the application,
+- what tests to run,
+- and how to deploy the software.
+
+### 🧠 Simple Explanation
+
+Think of a Jenkinsfile like a recipe for Jenkins.
+
+Example:
+- Step 1 → Build app
+- Step 2 → Run tests
+- Step 3 → Deploy app
+
+Jenkins reads the Jenkinsfile and follows the instructions automatically.
+
+### ✅ Why Jenkinsfile is Used
+
+- Pipelines can be stored in Git with the application code
+- Teams can track changes to pipelines
+- Easier collaboration between developers
+- Same pipeline can be reused many times
+- Helps automate everything consistently
+
+💡 This concept is called **Pipeline as Code**.
+
+## 📄 Simple Jenkinsfile Example
+
+```groovy
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Build') {
+            steps {
+                echo 'Building the application...'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying application...'
+            }
+        }
+    }
+}
+```
+
 ---
 
 ## 🧩 Stages in a Pipeline

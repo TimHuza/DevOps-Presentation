@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>DevOps Presentation – Tim Huza</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117;--surface:#161b22;--border:#30363d;
+  --text:#e6edf3;--muted:#8b949e;
+  --accent:#f97316;--blue:#58a6ff;--cyan:#06b6d4;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  overflow:hidden}
+
+/* shell */
+.deck{position:relative;width:100vw;height:100vh;overflow:hidden}
+.slide{
+  position:absolute;inset:0;bottom:52px;
+  display:none;flex-direction:column;overflow:hidden;
+  background:var(--bg);
+}
+.slide.active{display:flex}
+
+/* TITLE SLIDE */
+.title-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;height:100%;text-align:center;
+  background:radial-gradient(ellipse at 50% 0%,#1e1b4b 0%,#0d1117 70%);
+  padding:2rem;
+}
+.title-wrap .hero-icon{font-size:6rem;margin-bottom:1rem;
+  filter:drop-shadow(0 0 30px rgba(249,115,22,.5))}
+.title-wrap h1{
+  font-size:clamp(2.2rem,5vw,4rem);font-weight:800;
+  background:linear-gradient(90deg,#f97316,#f59e0b);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:.5rem;letter-spacing:-1px;
+}
+.title-wrap .sub{font-size:1.15rem;color:var(--muted);margin-bottom:1.5rem}
+.title-wrap .author{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:999px;padding:.45rem 1.4rem;font-size:1rem;
+  font-weight:600;margin-bottom:2rem;
+}
+.chips{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;max-width:520px}
+.chip{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:.4rem .9rem;font-size:.82rem;color:var(--muted);
+}
+
+/* CONTENT SLIDE */
+.s-head{
+  display:flex;align-items:center;gap:1rem;
+  padding:.9rem 2rem;background:var(--surface);
+  border-bottom:3px solid var(--accent);flex-shrink:0;
+}
+.s-num{
+  font-size:2rem;font-weight:900;min-width:3rem;
+  background:linear-gradient(135deg,var(--accent),#f59e0b);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.s-title{font-size:1.5rem;font-weight:700}
+.s-logo{height:42px;object-fit:contain;margin-left:auto;
+  filter:drop-shadow(0 0 6px rgba(255,255,255,.15))}
+
+.s-body{
+  flex:1;overflow-y:auto;padding:1.4rem 2rem 1rem;
+  display:flex;flex-direction:column;gap:.6rem;
+}
+.s-body::-webkit-scrollbar{width:5px}
+.s-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* two-col */
+.cols{display:grid;grid-template-columns:1fr 1.5fr;gap:2rem;align-items:center}
+.cols img{max-height:80vh;min-width: 20px;;width:100%;
+  border-radius:10px;border:1px solid var(--border);
+  object-fit:contain;background:var(--surface);padding:2px}
+@media(max-width:700px){.cols{grid-template-columns:1fr}}
+
+/* single centered image */
+.img-center{
+  display:block;max-width:100%;max-height:280px;
+  object-fit:contain;border-radius:10px;
+  border:1px solid var(--border);background:var(--surface);
+  padding:.5rem;margin:.4rem auto;
+}
+
+/* typography */
+h2{font-size:1.35rem;font-weight:700;color:var(--blue);
+  padding-left:.7rem;border-left:3px solid var(--accent);margin-top:.6rem}
+h3{font-size:1.05rem;font-weight:600;color:var(--text);margin-top:.7rem}
+p{line-height:1.7;color:#c9d1d9}
+strong{color:var(--text)}
+ul,ol{margin:.3rem 0 .3rem 1.4rem;color:#c9d1d9}
+li{margin:.25rem 0;line-height:1.6}
+ul li::marker{color:var(--accent)}
+ol li::marker{color:var(--blue);font-weight:700}
+
+/* tip */
+.tip{
+  background:rgba(6,182,212,.08);border-left:3px solid var(--cyan);
+  border-radius:0 8px 8px 0;padding:.5rem 1rem;
+  color:#67e8f9;font-size:.95rem;
+}
+.warn{
+  background:rgba(249,115,22,.08);border-left:3px solid var(--accent);
+  border-radius:0 8px 8px 0;padding:.5rem 1rem;
+  color:#fdba74;font-size:.95rem;
+}
+
+/* code */
+code{
+  font-family:Consolas,'JetBrains Mono','Courier New',monospace;
+  font-size:.84em;background:#1a2233;color:#79c0ff;
+  padding:.1em .35em;border-radius:4px;
+}
+pre{
+  background:#0d1117;border:1px solid var(--border);border-radius:10px;
+  padding:1rem 1.2rem;overflow-x:auto;margin:.4rem 0;
+}
+pre code{background:transparent;color:#e6edf3;padding:0;font-size:.88rem;line-height:1.65}
+
+/* table */
+.tw{overflow-x:auto;margin:.4rem 0}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th{background:#1f2937;color:var(--text);font-weight:600;
+   padding:.55rem .9rem;border:1px solid var(--border);text-align:left}
+td{padding:.5rem .9rem;border:1px solid var(--border);color:#c9d1d9}
+tr:hover td{background:rgba(249,115,22,.05)}
+
+/* key takeaway box */
+.takeaway{
+  background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(245,158,11,.08));
+  border:1px solid rgba(249,115,22,.3);border-radius:12px;
+  padding:1.2rem 1.5rem;margin-top:.8rem;
+}
+.takeaway p{color:#fdba74;font-size:1.05rem;line-height:1.7}
+
+/* summary grid */
+.sum-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:.75rem;margin-top:.5rem;
+}
+.sum-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:.75rem 1rem;font-size:.9rem;color:#c9d1d9;
+}
+.sum-card .ico{font-size:1.4rem;display:block;margin-bottom:.3rem}
+
+/* nav */
+.nav{
+  position:fixed;bottom:0;left:0;right:0;height:52px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 1.2rem;
+  background:rgba(13,17,23,.97);backdrop-filter:blur(12px);
+  border-top:1px solid var(--border);z-index:999;
+}
+.nbtn{
+  background:var(--surface);border:1px solid var(--border);
+  color:var(--text);padding:.4rem 1.1rem;border-radius:8px;
+  font-size:.88rem;font-weight:500;cursor:pointer;transition:all .18s;
+}
+.nbtn:hover{border-color:var(--accent);color:var(--accent)}
+.nbtn:disabled{opacity:.3;cursor:not-allowed}
+.nav-mid{display:flex;align-items:center;gap:.5rem}
+.dot{
+  width:8px;height:8px;border-radius:50%;background:var(--border);
+  cursor:pointer;border:none;transition:all .2s;padding:0;
+}
+.dot.on{background:var(--accent);transform:scale(1.5)}
+.ctr{font-size:.8rem;color:var(--muted);margin-left:.4rem;min-width:50px;text-align:center}
+/* per-topic accent overrides */
+.net{--accent:#06b6d4}
+.git-gh{--accent:#f43f5e}
+.jenkins{--accent:#8b5cf6}
+.cicd{--accent:#10b981}
+.pipe{--accent:#eab308}
+.docker{--accent:#3b82f6}
+.k8s{--accent:#326ce5}
+.ansible{--accent:#dc2626}
+.terraform{--accent:#844FBA}
+.iac{--accent:#14b8a6}
+.python{--accent:#ca8a04}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<section class="slide" id="s1" data-voice="static/voice/01-linux.mp3">
+  <div class="s-head">
+    <div class="s-num">01</div>
+    <div class="s-title">🐧 Linux</div>
+    <img class="s-logo" src="../static/images/linux/linux-logo.png" alt="Linux Logo">
+  </div>
+  <div class="s-body">
+    <div class="cols">
+      <div>
+        <h2>📌 What is Linux?</h2>
+        <p>Linux is an <strong>operating system (OS)</strong>. An operating system is the main software that helps your computer work.</p>
+        <ul>
+          <li>It acts as a bridge between <strong>hardware</strong> and <strong>applications</strong></li>
+          <li>Used in servers, cloud platforms, and DevOps environments</li>
+          <li>Known for being <strong>stable, secure, and customizable</strong></li>
+        </ul>
+        <h3 style="margin-top:1rem">It connects:</h3>
+        <ul>
+          <li>🖥️ <strong>Hardware</strong> → keyboard, screen, CPU, memory, hard drive</li>
+          <li>📱 <strong>Software</strong> → apps, games, browsers, tools</li>
+        </ul>
+        <h2>🤔 So What Makes Linux Special?</h2>
+        <p>Linux is preferred by developers and IT professionals for several reasons:</p>
+        <div class="sum-grid" style="margin-top:1rem">
+          <div class="sum-card"><span class="ico">🔓</span><strong>Open-source</strong></div>
+          <div class="sum-card"><span class="ico">💰</span><strong>Free to use</strong></div>
+          <div class="sum-card"><span class="ico">🛡️</span><strong>Stable & Secure</strong></div>
+          <div class="sum-card"><span class="ico">⚡</span><strong>Fast</strong></div>
+          <div class="sum-card"><span class="ico">🛠️</span><strong>Customizable</strong></div>
+        </div>
+        <div class="tip" style="margin-top:1rem">💡 Many developers and IT professionals prefer Linux because of its power and flexibility.</div>
+        
+        <h3 style="margin-top:1rem">🏢 Big Companies That Use Linux:</h3>
+        <div class="chips" style="justify-content:flex-start;margin-top:.5rem">
+          <span class="chip">Google</span> <span class="chip">Amazon</span>
+          <span class="chip">Netflix</span> <span class="chip">Meta</span>
+          <span class="chip">Tesla</span> <span class="chip">Uber</span>
+          <span class="chip">Spotify</span>
+        </div>
+      </div>
+        <img src="../static/images/linux/linux-logo.png" alt="Linux">
+    </div>
+    <div style="display:flex; gap:1rem; justify-content:center; margin-top:1rem">
+      <img src="../static/gifs/linux/about-linux.gif" alt="About Linux" class="img-center" style="margin:0; max-height:200px">
+      <img src="../static/gifs/linux/linux-vs-windows.gif" alt="Linux vs Windows" class="img-center" style="margin:0; max-height:200px">
+    </div>
+  </div>
+  </div>
+</section>
+
+<section class="slide" id="s2" data-voice="static/voice/02-linux-files.mp3">
+  <div class="s-head">
+    <div class="s-num">02</div>
+    <div class="s-title">🐧 Linux — Files &amp; Directory Structure</div>
+    <img class="s-logo" src="../static/images/linux/linux-logo.png" alt="Linux Logo">
+  </div>
+  <div class="s-body">
+    <div class="cols">
+      <div>
+        <h2>📁 Files in Linux</h2>
+        <p>In Linux, <strong>everything is treated as a file</strong>: Text files, directories, and even hardware devices.</p>
+        
+        <h3 style="margin-top:1.2rem">📂 Directory Structure</h3>
+        <p>Linux uses a <strong>hierarchical file system</strong> starting from the root (<code>/</code>):</p>
+        <pre><code>/
+├── home/  ← User directories
+├── etc/   ← Configuration files
+├── var/   ← Variable data (logs, etc.)
+└── bin/   ← Essential commands</code></pre>
+        
+        <div class="tip">💡 Think of it like a tree with branches!</div>
+        <hr style="margin-top: 30px;margin-bottom: 20px;">
+        <h2>🏠 /home → Personal User Files</h2>
+        <p>Where normal users keep their personal data (Documents, Downloads, etc.).</p>
+        <pre><code>/home/tim
+/home/alex</code></pre>
+        <div class="tip">💡 Similar to <code>C:\Users\Tim</code> on Windows.</div>
+        
+        <h2 style="margin-top:2rem;">⚙️ /etc → System Configuration</h2>
+        <p>Stores important system settings and service configurations.</p>
+        <ul>
+          <li>Network settings</li>
+          <li>User account settings</li>
+          <li>Installed service configs</li>
+        </ul>
+        <div class="tip">💡 The <strong>settings menu</strong> of Linux.</div>
+        <h2 style="margin-top:2rem;">📜 /var → Variable Data</h2>
+        <p>Stores data that changes often, like <strong>Logs</strong> and <strong>Cache</strong>.</p>
+        <pre><code>/var/log  ← troubleshooting logs</code></pre>
+        <ul>
+          <li>login history</li>
+          <li>system errors</li>
+        </ul>
+        <div class="tip">💡 Admins use this folder to solve problems.</div>
+        
+        <h2 style="margin-top:2rem">🛠️ /bin → Basic Commands</h2>
+        <p>Contains essential commands used by all users.</p>
+        <ul>
+          <li>ls</li>
+          <li>cp</li>
+          <li>mv</li>
+          <li>rm</li>
+          <li>mkdir</li>
+        </ul>
+        <div class="tip">💡 Without this, terminal commands wouldn't work!</div>
+        <h2 style="margin-top:2rem;">🧪 /tmp → Temporary Files</h2>
+        <p>Used for temporary data that is often deleted after a reboot.</p>
+        <div class="tip">💡 Like a scratchpad — used now, removed later.</div>
+        
+        <h2 style="margin-top:2rem">📦 /usr → Installed Programs</h2>
+        <p>Contains many installed applications, libraries, and shared files.</p>
+        <pre><code>/usr/bin
+/usr/share</code></pre>
+        <div class="tip">💡 Many programs you install live here.</div>
+      </div>
+      <img src="../static/images/linux/files.png" alt="Linux Files" class="cols">
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="s3" data-voice="static/voice/03-linux-commands.mp3">
+  <div class="s-head">
+    <div class="s-num">03</div>
+    <div class="s-title">🐧 Linux — Basic Commands</div>
+    <img class="s-logo" src="../static/images/linux/linux-logo.png" alt="Linux Logo">
+  </div>
+  <div class="s-body">
+    <h2>💻 Basic Commands in Linux</h2>
+    <p>Linux is often controlled using the <strong>command line (terminal)</strong>.</p>
+
+    <h3>Common Commands:</h3>
+    <div class="sum-grid">
+      <div class="sum-card"><code>ls</code><br>List files</div>
+      <div class="sum-card"><code>cd</code><br>Change directory</div>
+      <div class="sum-card"><code>pwd</code><br>Show current directory</div>
+      <div class="sum-card"><code>mkdir</code><br>Create folder</div>
+      <div class="sum-card"><code>rm</code><br>Delete files</div>
+      <div class="sum-card"><code>cp</code><br>Copy files</div>
+      <div class="sum-card"><code>mv</code><br>Move/rename files</div>
+    </div>
+
+    <h3>Example:</h3>
+    <pre><code>cd /home
+ls
+mkdir project
+cd project</code></pre>
+
+    <div class="tip">💡 DevOps engineers use these commands daily!</div>
+    <img src="../static/gifs/linux/linux-commands.gif" alt="Linux Commands" class="img-center" style="max-height: 200px;">
+  </div>
+</section>
+
+<section class="slide" id="s4" data-voice="static/voice/04-linux-users-groups.mp3">
+  <div class="s-head">
+    <div class="s-num">04</div>
+    <div class="s-title">🐧 Linux — Users &amp; Groups</div>
+    <img class="s-logo" src="../static/images/linux/linux-logo.png" alt="Linux Logo">
+  </div>
+  <div class="s-body">
+    <div class="cols">
+      <div>
+        <h2>👤 Users and Groups in Linux</h2>
+        <p>Linux is a <strong>multi-user system</strong>, meaning multiple users can use it safely.</p>
+
+        <h3>Users:</h3>
+        <ul>
+          <li>Each user has a <strong>username and home directory</strong></li>
+          <li>Example: <code>/home/tim</code></li>
+        </ul>
+
+        <h3>Groups:</h3>
+        <ul>
+          <li>Users can belong to groups</li>
+          <li>Used to manage permissions efficiently</li>
+        </ul>
+
+        <h3>Why it matters:</h3>
+        <ul>
+          <li>Controls access to files and systems</li>
+          <li>Important for security in DevOps</li>
+        </ul>
+      </div>
+      <img src="../static/images/linux/users-groups.png" alt="Users and Groups">
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="s5" data-voice="static/voice/05-linux-file-permissions.mp3">
+  <div class="s-head">
+    <div class="s-num">05</div>
+    <div class="s-title">🐧 Linux — File Permissions &amp; chmod</div>
+    <img class="s-logo" src="../static/images/linux/linux-logo.png" alt="Linux Logo">
+  </div>
+  <div class="s-body">
+    <div class="cols">
+      <div>
+        <h2>🔐 File Permissions and <code>chmod</code></h2>
+        <p>Every file in Linux has permissions:</p>
+        <pre><code>-rwxr-xr--</code></pre>
+
+        <h3>Breakdown:</h3>
+        <ul>
+          <li><code>r</code> → read</li>
+          <li><code>w</code> → write</li>
+          <li><code>x</code> → execute</li>
+        </ul>
+
+        <h3>Permission Groups:</h3>
+        <ul>
+          <li>Owner</li>
+          <li>Group</li>
+          <li>Others</li>
+        </ul>
+
+        <h3>🔧 Changing Permissions with <code>chmod</code>:</h3>
+        <pre><code>chmod 755 file.sh</code></pre>
+        <ul>
+          <li>Owner → full access</li>
+          <li>Group → read &amp; execute</li>
+          <li>Others → read &amp; execute</li>
+        </ul>
+
+        <h3>💡 Why Permissions Matter:</h3>
+        <ul>
+          <li>Protect sensitive data</li>
+          <li>Control who can run scripts</li>
+          <li>Essential for secure DevOps pipelines</li>
+        </ul>
+      </div>
+      <img src="../static/images/linux/chmod.png" alt="chmod">
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="s6" data-voice="static/voice/06-linux-summary.mp3">
+  <div class="s-head">
+    <div class="s-num">06</div>
+    <div class="s-title">🐧 Linux — Summary</div>
+    <img class="s-logo" src="../static/images/linux/linux-logo.png" alt="Linux Logo">
+  </div>
+  <div class="s-body">
+    <h2>🚀 Summary</h2>
+    <div class="sum-grid">
+      <div class="sum-card"><span class="ico">🏗️</span>Linux is the <strong>foundation of DevOps</strong></div>
+      <div class="sum-card"><span class="ico">📄</span>Everything is treated as a <strong>file</strong></div>
+      <div class="sum-card"><span class="ico">💻</span>Command line is the <strong>main interface</strong></div>
+      <div class="sum-card"><span class="ico">👤</span>Users &amp; permissions ensure <strong>security</strong></div>
+      <div class="sum-card"><span class="ico">☁️</span>Used in <strong>servers, containers, and cloud</strong></div>
+    </div>
+
+    <h2 style="margin-top:1.2rem">🎯 Key Takeaway</h2>
+    <div class="takeaway">
+      <p>👉 If you understand Linux, you understand the <strong>core environment where DevOps happens</strong></p>
+    </div>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<!-- ═══════════════ NAV ═══════════════ -->
+<nav class="nav">
+  <button class="nbtn" id="btn-prev">&#8592; Prev</button>
+  <div class="nav-mid">
+    <button class="dot on" title="What is Linux?"></button>
+    <button class="dot" title="Files: Structure"></button>
+    <button class="dot" title="Files: /home &amp; /etc"></button>
+    <button class="dot" title="Files: /var &amp; /bin"></button>
+    <button class="dot" title="Files: /tmp &amp; /usr"></button>
+    <button class="dot" title="Commands"></button>
+    <button class="dot" title="Users &amp; Groups"></button>
+    <button class="dot" title="Permissions"></button>
+    <button class="dot" title="Linux Summary"></button>
+    <span class="ctr" id="ctr">1 / 9</span>
+  </div>
+  <button class="nbtn" id="btn-next">Next &#8594;</button>
+</nav>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const dots   = document.querySelectorAll('.dot');
+const ctr    = document.getElementById('ctr');
+const prev   = document.getElementById('btn-prev');
+const next   = document.getElementById('btn-next');
+let cur = 0;
+
+function go(n){
+  slides[cur].classList.remove('active');
+  dots[cur].classList.remove('on');
+  cur = Math.max(0, Math.min(n, slides.length - 1));
+  slides[cur].classList.add('active');
+  dots[cur].classList.add('on');
+  ctr.textContent = (cur + 1) + ' / ' + slides.length;
+  prev.disabled = cur === 0;
+  next.disabled = cur === slides.length - 1;
+  const body = slides[cur].querySelector('.s-body');
+  if(body) body.scrollTop = 0;
+}
+
+prev.addEventListener('click', () => go(cur - 1));
+next.addEventListener('click', () => go(cur + 1));
+dots.forEach((d, i) => d.addEventListener('click', () => go(i)));
+document.addEventListener('keydown', e => {
+  if(e.key === 'ArrowRight' || e.key === 'ArrowDown') go(cur + 1);
+  if(e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(cur - 1);
+});
+go(0);
+</script>
+</body>
+</html>

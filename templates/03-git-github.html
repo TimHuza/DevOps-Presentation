@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>DevOps Presentation – Tim Huza</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117;--surface:#161b22;--border:#30363d;
+  --text:#e6edf3;--muted:#8b949e;
+  --accent:#f97316;--blue:#58a6ff;--cyan:#06b6d4;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  overflow:hidden}
+
+/* shell */
+.deck{position:relative;width:100vw;height:100vh;overflow:hidden}
+.slide{
+  position:absolute;inset:0;bottom:52px;
+  display:none;flex-direction:column;overflow:hidden;
+  background:var(--bg);
+}
+.slide.active{display:flex}
+
+/* TITLE SLIDE */
+.title-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;height:100%;text-align:center;
+  background:radial-gradient(ellipse at 50% 0%,#1e1b4b 0%,#0d1117 70%);
+  padding:2rem;
+}
+.title-wrap .hero-icon{font-size:6rem;margin-bottom:1rem;
+  filter:drop-shadow(0 0 30px rgba(249,115,22,.5))}
+.title-wrap h1{
+  font-size:clamp(2.2rem,5vw,4rem);font-weight:800;
+  background:linear-gradient(90deg,#f97316,#f59e0b);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:.5rem;letter-spacing:-1px;
+}
+.title-wrap .sub{font-size:1.15rem;color:var(--muted);margin-bottom:1.5rem}
+.title-wrap .author{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:999px;padding:.45rem 1.4rem;font-size:1rem;
+  font-weight:600;margin-bottom:2rem;
+}
+.chips{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;max-width:520px}
+.chip{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:.4rem .9rem;font-size:.82rem;color:var(--muted);
+}
+
+/* CONTENT SLIDE */
+.s-head{
+  display:flex;align-items:center;gap:1rem;
+  padding:.9rem 2rem;background:var(--surface);
+  border-bottom:3px solid var(--accent);flex-shrink:0;
+}
+.s-num{
+  font-size:2rem;font-weight:900;min-width:3rem;
+  background:linear-gradient(135deg,var(--accent),#f59e0b);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.s-title{font-size:1.5rem;font-weight:700}
+.s-logo{height:42px;object-fit:contain;margin-left:auto;
+  filter:drop-shadow(0 0 6px rgba(255,255,255,.15))}
+
+.s-body{
+  flex:1;overflow-y:auto;padding:1.4rem 2rem 1rem;
+  display:flex;flex-direction:column;gap:.6rem;
+}
+.s-body::-webkit-scrollbar{width:5px}
+.s-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* two-col */
+.cols{display:grid;grid-template-columns:1fr auto;gap:1.5rem;align-items:start}
+.cols img{max-height:260px;max-width:340px;width:100%;
+  border-radius:10px;border:1px solid var(--border);
+  object-fit:contain;background:var(--surface);padding:.4rem}
+@media(max-width:700px){.cols{grid-template-columns:1fr}}
+
+/* single centered image */
+.img-center{
+  display:block;max-width:100%;max-height:280px;
+  object-fit:contain;border-radius:10px;
+  border:1px solid var(--border);background:var(--surface);
+  padding:.5rem;margin:.4rem auto;
+}
+
+/* typography */
+h2{font-size:1.35rem;font-weight:700;color:var(--blue);
+  padding-left:.7rem;border-left:3px solid var(--accent);margin-top:.6rem}
+h3{font-size:1.05rem;font-weight:600;color:var(--text);margin-top:.7rem}
+p{line-height:1.7;color:#c9d1d9}
+strong{color:var(--text)}
+ul,ol{margin:.3rem 0 .3rem 1.4rem;color:#c9d1d9}
+li{margin:.25rem 0;line-height:1.6}
+ul li::marker{color:var(--accent)}
+ol li::marker{color:var(--blue);font-weight:700}
+
+/* tip */
+.tip{
+  background:rgba(6,182,212,.08);border-left:3px solid var(--cyan);
+  border-radius:0 8px 8px 0;padding:.5rem 1rem;
+  color:#67e8f9;font-size:.95rem;
+}
+.warn{
+  background:rgba(249,115,22,.08);border-left:3px solid var(--accent);
+  border-radius:0 8px 8px 0;padding:.5rem 1rem;
+  color:#fdba74;font-size:.95rem;
+}
+
+/* code */
+code{
+  font-family:Consolas,'JetBrains Mono','Courier New',monospace;
+  font-size:.84em;background:#1a2233;color:#79c0ff;
+  padding:.1em .35em;border-radius:4px;
+}
+pre{
+  background:#0d1117;border:1px solid var(--border);border-radius:10px;
+  padding:1rem 1.2rem;overflow-x:auto;margin:.4rem 0;
+}
+pre code{background:transparent;color:#e6edf3;padding:0;font-size:.88rem;line-height:1.65}
+
+/* table */
+.tw{overflow-x:auto;margin:.4rem 0}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th{background:#1f2937;color:var(--text);font-weight:600;
+   padding:.55rem .9rem;border:1px solid var(--border);text-align:left}
+td{padding:.5rem .9rem;border:1px solid var(--border);color:#c9d1d9}
+tr:hover td{background:rgba(249,115,22,.05)}
+
+/* key takeaway box */
+.takeaway{
+  background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(245,158,11,.08));
+  border:1px solid rgba(249,115,22,.3);border-radius:12px;
+  padding:1.2rem 1.5rem;margin-top:.8rem;
+}
+.takeaway p{color:#fdba74;font-size:1.05rem;line-height:1.7}
+
+/* summary grid */
+.sum-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:.75rem;margin-top:.5rem;
+}
+.sum-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:.75rem 1rem;font-size:.9rem;color:#c9d1d9;
+}
+.sum-card .ico{font-size:1.4rem;display:block;margin-bottom:.3rem}
+
+/* nav */
+.nav{
+  position:fixed;bottom:0;left:0;right:0;height:52px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 1.2rem;
+  background:rgba(13,17,23,.97);backdrop-filter:blur(12px);
+  border-top:1px solid var(--border);z-index:999;
+}
+.nbtn{
+  background:var(--surface);border:1px solid var(--border);
+  color:var(--text);padding:.4rem 1.1rem;border-radius:8px;
+  font-size:.88rem;font-weight:500;cursor:pointer;transition:all .18s;
+}
+.nbtn:hover{border-color:var(--accent);color:var(--accent)}
+.nbtn:disabled{opacity:.3;cursor:not-allowed}
+.nav-mid{display:flex;align-items:center;gap:.5rem}
+.dot{
+  width:8px;height:8px;border-radius:50%;background:var(--border);
+  cursor:pointer;border:none;transition:all .2s;padding:0;
+}
+.dot.on{background:var(--accent);transform:scale(1.5)}
+.ctr{font-size:.8rem;color:var(--muted);margin-left:.4rem;min-width:50px;text-align:center}
+/* per-topic accent overrides */
+.net{--accent:#06b6d4}
+.git-gh{--accent:#f43f5e}
+.jenkins{--accent:#8b5cf6}
+.cicd{--accent:#10b981}
+.pipe{--accent:#eab308}
+.docker{--accent:#3b82f6}
+.k8s{--accent:#326ce5}
+.ansible{--accent:#dc2626}
+.terraform{--accent:#844FBA}
+.iac{--accent:#14b8a6}
+.python{--accent:#ca8a04}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<section class="slide git-gh" id="s12">
+  <div class="s-head">
+    <div class="s-num">12</div>
+    <div class="s-title">🔧 Git &amp; GitHub</div>
+    <img class="s-logo" src="../static/images/git-github/git-logo.png" alt="Git">
+  </div>
+  <div class="s-body">
+    <div class="cols">
+      <div>
+        <h2>📌 What is Version Control?</h2>
+        <p>Version Control is a system that helps <strong>track changes in files over time</strong>.</p>
+        <ul>
+          <li>Keeps history of changes</li>
+          <li>Allows reverting to previous versions</li>
+          <li>Enables collaboration between multiple developers</li>
+        </ul>
+        <div class="tip">💡 Think of it like "track changes" but for code projects</div>
+
+        <h2 style="margin-top:1rem">🧰 What is Git?</h2>
+        <p>Git is a <strong>distributed version control system</strong>.</p>
+        <ul>
+          <li>Tracks changes in code</li>
+          <li>Works locally on your computer</li>
+          <li>Fast and efficient</li>
+          <li>Widely used in DevOps and software development</li>
+        </ul>
+        <h3>Key Idea:</h3>
+        <p>Every developer has a <strong>full copy of the project history</strong></p>
+        <div class="tip">💡 Git is the core tool for managing code in DevOps</div>
+      </div>
+        <img src="../static/images/git-github/git-logo.png" alt="Git Logo" style="max-height:200px;border-radius:10px;border:1px solid var(--border);object-fit:contain;background:var(--surface);padding:.5rem">
+    </div>
+    <img src="../static/gifs/git-github/git.gif" alt="Git Animation" class="img-center" style="max-height:150px">
+  </div>
+</section>
+
+<section class="slide git-gh" id="s13">
+  <div class="s-head">
+    <div class="s-num">13</div>
+    <div class="s-title">🔧 Git &amp; GitHub — What is GitHub?</div>
+    <img class="s-logo" src="../static/images/git-github/github-logo.png" alt="GitHub">
+  </div>
+  <div class="s-body">
+    <div class="cols">
+      <div>
+        <h2>🌐 What is GitHub?</h2>
+        <p>GitHub is a <strong>cloud platform that hosts Git repositories</strong>.</p>
+        <ul>
+          <li>Stores your code online</li>
+          <li>Enables collaboration</li>
+          <li>Provides tools like issues, pull requests, and actions</li>
+        </ul>
+        <h3>Other similar platforms:</h3>
+        <ul>
+          <li>GitLab</li>
+          <li>Bitbucket</li>
+        </ul>
+        <div class="tip">💡 GitHub = Git + collaboration + cloud</div>
+
+        <h2 style="margin-top:1rem">⚖️ Git vs GitHub</h2>
+        <div class="tw">
+          <table>
+            <tr><th>Feature</th><th>Git</th><th>GitHub</th></tr>
+            <tr><td>Type</td><td>Tool</td><td>Platform</td></tr>
+            <tr><td>Runs on</td><td>Local machine</td><td>Cloud</td></tr>
+            <tr><td>Purpose</td><td>Version control</td><td>Code hosting &amp; collaboration</td></tr>
+            <tr><td>Internet needed</td><td>No</td><td>Yes</td></tr>
+          </table>
+        </div>
+        <div class="tip">💡 You can use Git without GitHub, but not GitHub without Git</div>
+      </div>
+        <img src="../static/images/git-github/git-vs-github.png" alt="Git vs GitHub" style="max-height:280px;border-radius:10px;border:1px solid var(--border);object-fit:contain;background:var(--surface);padding:.4rem">
+    </div>
+    <img src="../static/gifs/git-github/github.gif" alt="GitHub Animation" class="img-center" style="max-height:150px">
+  </div>
+</section>
+
+<section class="slide git-gh" id="s14">
+  <div class="s-head">
+    <div class="s-num">14</div>
+    <div class="s-title">🔧 Git &amp; GitHub — Basic Commands</div>
+    <img class="s-logo" src="../static/images/git-github/git-logo.png" alt="Git">
+  </div>
+  <div class="s-body">
+    <div class="cols">
+      <div>
+        <h2>💻 Basic Git Commands</h2>
+        <p>These are the most important commands every beginner should know:</p>
+        <div class="sum-grid">
+          <ul>
+            <li><div class="sum-card"><code>git init</code><br>Initialize a repository</div></li>
+            <li><div class="sum-card"><code>git add</code><br>Add files to staging</div></li>
+            <li><div class="sum-card"><code>git commit</code><br>Save changes</div></li>
+            <li><div class="sum-card"><code>git push</code><br>Upload to GitHub</div></li>
+            <li><div class="sum-card"><code>git pull</code><br>Download changes</div></li>
+          </ul>
+        </div>
+
+        <h3>Example Workflow:</h3>
+        <pre><code>git init
+git add .
+git commit -m "Initial commit"
+git push origin main</code></pre>
+        <div class="tip">💡 This is the basic flow used in most projects</div>
+      </div>
+        <img src="../static/images/git-github/git-commands.png" alt="Git Commands" style="max-height:300px;border-radius:10px;border:1px solid var(--border);object-fit:contain;background:var(--surface);padding:.4rem">
+      </div>
+      <img src="../static/gifs/git-github/code-writing.gif" alt="Code Writing" class="img-center" style="max-height:200px">
+  </div>
+</section>
+
+<section class="slide git-gh" id="s15">
+  <div class="s-head">
+    <div class="s-num">15</div>
+    <div class="s-title">🔧 Git &amp; GitHub — Branching &amp; Merging</div>
+    <img class="s-logo" src="../static/images/git-github/git-logo.png" alt="Git">
+  </div>
+  <div class="s-body">
+    <div class="cols">
+      <div>
+        <h2>🌿 Branching and Merging</h2>
+        <p>Branching allows you to work on different features <strong>without affecting the main code</strong>.</p>
+
+        <h3>Why use branches?</h3>
+        <ul>
+          <li>Work safely on new features</li>
+          <li>Fix bugs without breaking main code</li>
+        </ul>
+
+        <h3>Common Branch:</h3>
+        <ul>
+          <li><code>main</code> (or <code>master</code>) → main version of the project</li>
+        </ul>
+
+        <h3>Example — Create &amp; switch branch:</h3>
+        <pre><code>git branch feature-login
+git checkout feature-login</code></pre>
+
+        <h3>Merging — combine changes into another branch:</h3>
+        <pre><code>git merge feature-login</code></pre>
+        <div class="tip">💡 Branching is essential for teamwork and safe development</div>
+      </div>
+      <img src="../static/images/git-github/branch-commits.png" alt="Branch Commits" style="max-height:300px;border-radius:10px;border:1px solid var(--border);object-fit:contain;background:var(--surface);padding:.4rem">
+    </div>
+  </div>
+</section>
+
+<section class="slide git-gh" id="s16">
+  <div class="s-head">
+    <div class="s-num">16</div>
+    <div class="s-title">🔧 Git &amp; GitHub — Pull Requests</div>
+    <img class="s-logo" src="../static/images/git-github/github-logo.png" alt="GitHub">
+  </div>
+  <div class="s-body">
+    <h2>🤝 Collaboration using Pull Requests</h2>
+    <p>A Pull Request (PR) is a way to <strong>propose changes</strong> to a repository.</p>
+
+    <h3>Workflow:</h3>
+    <ol>
+      <li>Create a branch</li>
+      <li>Make changes</li>
+      <li>Push to GitHub</li>
+      <li>Open a Pull Request</li>
+      <li>Review and merge</li>
+    </ol>
+
+    <h3>Why Pull Requests?</h3>
+    <ul>
+      <li>Code review by team members</li>
+      <li>Discuss changes before merging</li>
+      <li>Improve code quality</li>
+    </ul>
+    <div class="tip">💡 PRs are a key part of professional DevOps workflows</div>
+  </div>
+</section>
+
+<section class="slide git-gh" id="s17">
+  <div class="s-head">
+    <div class="s-num">17</div>
+    <div class="s-title">🔧 Git &amp; GitHub — Summary</div>
+    <img class="s-logo" src="../static/images/git-github/git-logo.png" alt="Git">
+  </div>
+  <div class="s-body">
+    <h2>🚀 Summary</h2>
+    <div class="sum-grid">
+      <div class="sum-card"><span class="ico">🕓</span>Git <strong>tracks changes</strong> in code over time</div>
+      <div class="sum-card"><span class="ico">☁️</span>GitHub <strong>hosts repositories</strong> in the cloud</div>
+      <div class="sum-card"><span class="ico">🌿</span><strong>Branches</strong> let teams work safely in parallel</div>
+      <div class="sum-card"><span class="ico">🔀</span><strong>Merging</strong> combines branch work into main</div>
+      <div class="sum-card"><span class="ico">🤝</span><strong>Pull Requests</strong> enable code review &amp; collaboration</div>
+    </div>
+
+    <h2 style="margin-top:1.2rem">🎯 Key Takeaway</h2>
+    <div class="takeaway">
+      <p>👉 Git &amp; GitHub are the <strong>backbone of collaborative DevOps</strong> — every change, every deploy starts with a commit</p>
+    </div>
+    <img src="../static/gifs/git-github/git-gup-spongebob.gif" alt="Spongebob Git" class="img-center" style="max-height: 200px;">
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<!-- ═══════════════ NAV ═══════════════ -->
+<nav class="nav">
+  <button class="nbtn" id="btn-prev">&#8592; Prev</button>
+  <div class="nav-mid">
+    <button class="dot on" title="Version Control &amp; Git"></button>
+    <button class="dot" title="GitHub &amp; Git vs GitHub"></button>
+    <button class="dot" title="Basic Git Commands"></button>
+    <button class="dot" title="Branching &amp; Merging"></button>
+    <button class="dot" title="Pull Requests"></button>
+    <button class="dot" title="Git Summary"></button>
+    <span class="ctr" id="ctr">1 / 6</span>
+  </div>
+  <button class="nbtn" id="btn-next">Next &#8594;</button>
+</nav>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const dots   = document.querySelectorAll('.dot');
+const ctr    = document.getElementById('ctr');
+const prev   = document.getElementById('btn-prev');
+const next   = document.getElementById('btn-next');
+let cur = 0;
+
+function go(n){
+  slides[cur].classList.remove('active');
+  dots[cur].classList.remove('on');
+  cur = Math.max(0, Math.min(n, slides.length - 1));
+  slides[cur].classList.add('active');
+  dots[cur].classList.add('on');
+  ctr.textContent = (cur + 1) + ' / ' + slides.length;
+  prev.disabled = cur === 0;
+  next.disabled = cur === slides.length - 1;
+  const body = slides[cur].querySelector('.s-body');
+  if(body) body.scrollTop = 0;
+}
+
+prev.addEventListener('click', () => go(cur - 1));
+next.addEventListener('click', () => go(cur + 1));
+dots.forEach((d, i) => d.addEventListener('click', () => go(i)));
+document.addEventListener('keydown', e => {
+  if(e.key === 'ArrowRight' || e.key === 'ArrowDown') go(cur + 1);
+  if(e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(cur - 1);
+});
+go(0);
+</script>
+</body>
+</html>

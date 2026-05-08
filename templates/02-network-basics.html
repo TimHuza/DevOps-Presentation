@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>DevOps Presentation – Tim Huza</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117;--surface:#161b22;--border:#30363d;
+  --text:#e6edf3;--muted:#8b949e;
+  --accent:#f97316;--blue:#58a6ff;--cyan:#06b6d4;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  overflow:hidden}
+
+/* shell */
+.deck{position:relative;width:100vw;height:100vh;overflow:hidden}
+.slide{
+  position:absolute;inset:0;bottom:52px;
+  display:none;flex-direction:column;overflow:hidden;
+  background:var(--bg);
+}
+.slide.active{display:flex}
+
+/* TITLE SLIDE */
+.title-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;height:100%;text-align:center;
+  background:radial-gradient(ellipse at 50% 0%,#1e1b4b 0%,#0d1117 70%);
+  padding:2rem;
+}
+.title-wrap .hero-icon{font-size:6rem;margin-bottom:1rem;
+  filter:drop-shadow(0 0 30px rgba(249,115,22,.5))}
+.title-wrap h1{
+  font-size:clamp(2.2rem,5vw,4rem);font-weight:800;
+  background:linear-gradient(90deg,#f97316,#f59e0b);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:.5rem;letter-spacing:-1px;
+}
+.title-wrap .sub{font-size:1.15rem;color:var(--muted);margin-bottom:1.5rem}
+.title-wrap .author{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:999px;padding:.45rem 1.4rem;font-size:1rem;
+  font-weight:600;margin-bottom:2rem;
+}
+.chips{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;max-width:520px}
+.chip{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:.4rem .9rem;font-size:.82rem;color:var(--muted);
+}
+
+/* CONTENT SLIDE */
+.s-head{
+  display:flex;align-items:center;gap:1rem;
+  padding:.9rem 2rem;background:var(--surface);
+  border-bottom:3px solid var(--accent);flex-shrink:0;
+}
+.s-num{
+  font-size:2rem;font-weight:900;min-width:3rem;
+  background:linear-gradient(135deg,var(--accent),#f59e0b);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.s-title{font-size:1.5rem;font-weight:700}
+.s-logo{height:42px;object-fit:contain;margin-left:auto;
+  filter:drop-shadow(0 0 6px rgba(255,255,255,.15))}
+
+.s-body{
+  flex:1;overflow-y:auto;padding:1.4rem 2rem 1rem;
+  display:flex;flex-direction:column;gap:.6rem;
+}
+.s-body::-webkit-scrollbar{width:5px}
+.s-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* two-col */
+.cols{display:grid;grid-template-columns:1fr auto;gap:1.5rem;align-items:start}
+.cols img{max-height:260px;width:100%;
+  border-radius:10px;border:1px solid var(--border);
+  object-fit:contain;background:var(--surface);padding:.4rem}
+@media(max-width:700px){.cols{grid-template-columns:1fr}}
+
+/* single centered image */
+.img-center{
+  display:block;max-width:100%;max-height:280px;
+  object-fit:contain;border-radius:10px;
+  border:1px solid var(--border);background:var(--surface);
+  padding:.5rem;margin:.4rem auto;
+}
+
+/* typography */
+h2{font-size:1.35rem;font-weight:700;color:var(--blue);
+  padding-left:.7rem;border-left:3px solid var(--accent);margin-top:.6rem}
+h3{font-size:1.05rem;font-weight:600;color:var(--text);margin-top:.7rem}
+p{line-height:1.7;color:#c9d1d9}
+strong{color:var(--text)}
+ul,ol{margin:.3rem 0 .3rem 1.4rem;color:#c9d1d9}
+li{margin:.25rem 0;line-height:1.6}
+ul li::marker{color:var(--accent)}
+ol li::marker{color:var(--blue);font-weight:700}
+
+/* tip */
+.tip{
+  background:rgba(6,182,212,.08);border-left:3px solid var(--cyan);
+  border-radius:0 8px 8px 0;padding:.5rem 1rem;
+  color:#67e8f9;font-size:.95rem;
+}
+.warn{
+  background:rgba(249,115,22,.08);border-left:3px solid var(--accent);
+  border-radius:0 8px 8px 0;padding:.5rem 1rem;
+  color:#fdba74;font-size:.95rem;
+}
+
+/* code */
+code{
+  font-family:Consolas,'JetBrains Mono','Courier New',monospace;
+  font-size:.84em;background:#1a2233;color:#79c0ff;
+  padding:.1em .35em;border-radius:4px;
+}
+pre{
+  background:#0d1117;border:1px solid var(--border);border-radius:10px;
+  padding:1rem 1.2rem;overflow-x:auto;margin:.4rem 0;
+}
+pre code{background:transparent;color:#e6edf3;padding:0;font-size:.88rem;line-height:1.65}
+
+/* table */
+.tw{overflow-x:auto;margin:.4rem 0}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th{background:#1f2937;color:var(--text);font-weight:600;
+   padding:.55rem .9rem;border:1px solid var(--border);text-align:left}
+td{padding:.5rem .9rem;border:1px solid var(--border);color:#c9d1d9}
+tr:hover td{background:rgba(249,115,22,.05)}
+
+/* key takeaway box */
+.takeaway{
+  background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(245,158,11,.08));
+  border:1px solid rgba(249,115,22,.3);border-radius:12px;
+  padding:1.2rem 1.5rem;margin-top:.8rem;
+}
+.takeaway p{color:#fdba74;font-size:1.05rem;line-height:1.7}
+
+/* summary grid */
+.sum-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:.75rem;margin-top:.5rem;
+}
+.sum-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:.75rem 1rem;font-size:.9rem;color:#c9d1d9;
+}
+.sum-card .ico{font-size:1.4rem;display:block;margin-bottom:.3rem}
+
+/* nav */
+.nav{
+  position:fixed;bottom:0;left:0;right:0;height:52px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 1.2rem;
+  background:rgba(13,17,23,.97);backdrop-filter:blur(12px);
+  border-top:1px solid var(--border);z-index:999;
+}
+.nbtn{
+  background:var(--surface);border:1px solid var(--border);
+  color:var(--text);padding:.4rem 1.1rem;border-radius:8px;
+  font-size:.88rem;font-weight:500;cursor:pointer;transition:all .18s;
+}
+.nbtn:hover{border-color:var(--accent);color:var(--accent)}
+.nbtn:disabled{opacity:.3;cursor:not-allowed}
+.nav-mid{display:flex;align-items:center;gap:.5rem}
+.dot{
+  width:8px;height:8px;border-radius:50%;background:var(--border);
+  cursor:pointer;border:none;transition:all .2s;padding:0;
+}
+.dot.on{background:var(--accent);transform:scale(1.5)}
+.ctr{font-size:.8rem;color:var(--muted);margin-left:.4rem;min-width:50px;text-align:center}
+/* per-topic accent overrides */
+.net{--accent:#06b6d4}
+.git-gh{--accent:#f43f5e}
+.jenkins{--accent:#8b5cf6}
+.cicd{--accent:#10b981}
+.pipe{--accent:#eab308}
+.docker{--accent:#3b82f6}
+.k8s{--accent:#326ce5}
+.ansible{--accent:#dc2626}
+.terraform{--accent:#844FBA}
+.iac{--accent:#14b8a6}
+.python{--accent:#ca8a04}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<section class="slide net" id="s7">
+  <div class="s-head">
+    <div class="s-num">07</div>
+    <div class="s-title">🌐 Network Basics</div>
+    <img class="s-logo" src="../static/images/network-basics/network.png" alt="Network">
+  </div>
+  <div class="s-body">
+    <div class="cols">
+      <div>
+        <h2>📌 What is a Network?</h2>
+        <p>A network is a group of computers and devices connected together to <strong>share data and resources</strong>.</p>
+        <ul>
+          <li>Allows communication between systems</li>
+          <li>Can be wired (cables) or wireless (Wi-Fi)</li>
+          <li>Essential for internet, cloud, and DevOps systems</li>
+        </ul>
+        <div class="tip">💡 Every DevOps system relies on networks to function!</div>
+
+        <h2 style="margin-top:1rem">🧭 IP Address</h2>
+        <p>An IP Address is a <strong>unique identifier</strong> for a device on a network — like a home address, but for computers.</p>
+        <pre><code>192.168.1.1</code></pre>
+        <h3>Types of IP:</h3>
+        <ul>
+          <li><strong>Public IP</strong> → Used on the internet</li>
+          <li><strong>Private IP</strong> → Used inside local networks</li>
+        </ul>
+        <div class="tip">💡 Without IP addresses, devices cannot communicate!</div>
+      </div>
+        <img src="../static/images/network-basics/network.png" alt="Network" style="max-height:260px;border-radius:10px;border:1px solid var(--border);object-fit:contain;background:var(--surface);padding:.4rem">
+    </div>
+    <div style="display:flex; gap:1rem; justify-content:center; margin-top:1rem">
+      <img src="../static/gifs/network/netwrok.gif" alt="Network Animation" class="img-center" style="margin:0; max-height:200px">
+      <img src="../static/gifs/network/netwroking.gif" alt="Networking Animation" class="img-center" style="margin:0; max-height:200px">
+    </div>
+  </div>
+</section>
+
+<section class="slide net" id="s8">
+  <div class="s-head">
+    <div class="s-num">08</div>
+    <div class="s-title">🌐 Network Basics — LAN &amp; WAN</div>
+    <img class="s-logo" src="../static/images/network-basics/network.png" alt="Network">
+  </div>
+  <div class="s-body">
+    <div class="cols">
+      <div>
+        <h2>🏠 LAN (Local Area Network)</h2>
+        <p>A LAN is a network that connects devices in a <strong>small area</strong>.</p>
+        <h3>Examples:</h3>
+        <ul>
+          <li>Home network</li>
+          <li>School or office network</li>
+        </ul>
+        <h3>Characteristics:</h3>
+        <ul>
+          <li>High speed</li>
+          <li>Limited geographic area</li>
+          <li>Usually privately owned</li>
+        </ul>
+        <div class="tip">💡 Your Wi-Fi at home is a LAN!</div>
+
+        <h2 style="margin-top:1rem">🌍 WAN (Wide Area Network)</h2>
+        <p>A WAN connects networks over a <strong>large geographic area</strong>.</p>
+        <h3>Example:</h3>
+        <ul><li>The Internet (largest WAN)</li></ul>
+        <h3>Characteristics:</h3>
+        <ul>
+          <li>Covers cities, countries, or continents</li>
+          <li>Slower than LAN (generally)</li>
+          <li>Connects multiple LANs together</li>
+        </ul>
+        <div class="tip">💡 DevOps systems often run across WANs (cloud infrastructure)</div>
+      </div>
+      <img src="../static/images/network-basics/lan-vs-wan.png" alt="LAN vs WAN" style="max-height:320px;border-radius:10px;border:1px solid var(--border);object-fit:contain;background:var(--surface);padding:.4rem">
+    </div>
+  </div>
+</section>
+
+<section class="slide net" id="s9">
+  <div class="s-head">
+    <div class="s-num">09</div>
+    <div class="s-title">🌐 Network Basics — HTTP &amp; HTTPS</div>
+    <img class="s-logo" src="../static/images/network-basics/network.png" alt="Network">
+  </div>
+  <div class="s-body">
+    <h2>🌐 HTTP (HyperText Transfer Protocol)</h2>
+    <p>HTTP is a protocol used to <strong>transfer data between a web browser and a server</strong>.</p>
+    <ul>
+      <li>Used when you visit websites</li>
+      <li>Works on <strong>port 80</strong></li>
+      <li>Data is sent in plain text</li>
+    </ul>
+    <h3>Why port 80?</h3>
+    <p>Port <strong>80</strong> became the standard default port for HTTP so computers know where normal web traffic should go.</p>
+    <pre><code>http://example.com</code></pre>
+    <div class="warn">⚠️ Not secure — data can be intercepted by anyone on the network</div>
+
+    <h2 style="margin-top:1.2rem">🔒 HTTPS (HyperText Transfer Protocol Secure)</h2>
+    <p>HTTPS is the <strong>secure version of HTTP</strong>.</p>
+    <ul>
+      <li>Protects sensitive information (passwords, payments)</li>
+      <li>Works on <strong>port 443</strong></li>
+    </ul>
+    <h3>Why port 443?</h3>
+    <p>Port <strong>443</strong> is used for HTTPS because it is the default port for secure web traffic.</p>
+    <pre><code>https://example.com</code></pre>
+    <div class="tip">💡 Always prefer HTTPS in real applications!</div>
+  </div>
+</section>
+
+<section class="slide net" id="s10">
+  <div class="s-head">
+    <div class="s-num">10</div>
+    <div class="s-title">🌐 Network Basics — TCP &amp; UDP</div>
+    <img class="s-logo" src="../static/images/network-basics/network.png" alt="Network">
+  </div>
+  <div class="s-body">
+    <div class="cols">
+      <div>
+        <h2>📦 TCP (Transmission Control Protocol)</h2>
+        <p>TCP ensures <strong>reliable data delivery</strong>.</p>
+        <h3>Features:</h3>
+        <ul>
+          <li>Data is sent in order</li>
+          <li>Errors are checked and corrected</li>
+          <li>Guarantees delivery</li>
+        </ul>
+        <h3>Use Cases:</h3>
+        <ul><li>Web browsing</li><li>File transfers</li></ul>
+        <div class="tip">💡 Think of TCP like a <strong>tracked delivery service</strong></div>
+
+        <h2 style="margin-top:1rem">⚡ UDP (User Datagram Protocol)</h2>
+        <p>UDP sends data <strong>faster but without guarantees</strong>.</p>
+        <h3>Features:</h3>
+        <ul>
+          <li>No error checking</li>
+          <li>No delivery confirmation</li>
+          <li>Faster than TCP</li>
+        </ul>
+        <h3>Use Cases:</h3>
+        <ul><li>Video streaming</li><li>Online gaming</li></ul>
+        <div class="tip">💡 Think of UDP like <strong>regular mail</strong> (fast but no tracking)</div>
+
+        <h3 style="margin-top:.8rem">🔄 TCP vs UDP</h3>
+        <div class="tw">
+          <table>
+            <tr><th>Feature</th><th>TCP</th><th>UDP</th></tr>
+            <tr><td>Speed</td><td>Slower</td><td>Faster</td></tr>
+            <tr><td>Reliability</td><td>High</td><td>Low</td></tr>
+            <tr><td>Error Checking</td><td>Yes</td><td>No</td></tr>
+            <tr><td>Use Cases</td><td>Websites, APIs</td><td>Streaming, gaming</td></tr>
+          </table>
+        </div>
+      </div>
+      <img src="../static/images/network-basics/tcp-and-udp.png" alt="TCP vs UDP" style="max-height:320px;border-radius:10px;border:1px solid var(--border);object-fit:contain;background:var(--surface);padding:.4rem">
+    </div>
+  </div>
+</section>
+
+<section class="slide net" id="s11">
+  <div class="s-head">
+    <div class="s-num">11</div>
+    <div class="s-title">🌐 Network Basics — Summary</div>
+    <img class="s-logo" src="../static/images/network-basics/network.png" alt="Network">
+  </div>
+  <div class="s-body">
+    <h2>🚀 Summary</h2>
+    <div class="sum-grid">
+      <div class="sum-card"><span class="ico">🔗</span>Networks connect devices for <strong>communication</strong></div>
+      <div class="sum-card"><span class="ico">🏷️</span>IP addresses <strong>identify devices</strong> on a network</div>
+      <div class="sum-card"><span class="ico">🏠</span>LAN = <strong>small networks</strong>, WAN = <strong>large networks</strong></div>
+      <div class="sum-card"><span class="ico">🔒</span>HTTP/HTTPS handle <strong>web communication</strong></div>
+      <div class="sum-card"><span class="ico">📦</span>TCP = <strong>reliable</strong>, UDP = <strong>fast</strong></div>
+    </div>
+
+    <h2 style="margin-top:1.2rem">🎯 Key Takeaway</h2>
+    <div class="takeaway">
+      <p>👉 Networking is the <strong>foundation of DevOps</strong>, because all systems, services, and tools communicate over networks</p>
+    </div>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<!-- ═══════════════ NAV ═══════════════ -->
+<nav class="nav">
+  <button class="nbtn" id="btn-prev">&#8592; Prev</button>
+  <div class="nav-mid">
+    <button class="dot on" title="What is a Network?"></button>
+    <button class="dot" title="LAN &amp; WAN"></button>
+    <button class="dot" title="HTTP &amp; HTTPS"></button>
+    <button class="dot" title="TCP &amp; UDP"></button>
+    <button class="dot" title="Network Summary"></button>
+    <span class="ctr" id="ctr">1 / 5</span>
+  </div>
+  <button class="nbtn" id="btn-next">Next &#8594;</button>
+</nav>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const dots   = document.querySelectorAll('.dot');
+const ctr    = document.getElementById('ctr');
+const prev   = document.getElementById('btn-prev');
+const next   = document.getElementById('btn-next');
+let cur = 0;
+
+function go(n){
+  slides[cur].classList.remove('active');
+  dots[cur].classList.remove('on');
+  cur = Math.max(0, Math.min(n, slides.length - 1));
+  slides[cur].classList.add('active');
+  dots[cur].classList.add('on');
+  ctr.textContent = (cur + 1) + ' / ' + slides.length;
+  prev.disabled = cur === 0;
+  next.disabled = cur === slides.length - 1;
+  const body = slides[cur].querySelector('.s-body');
+  if(body) body.scrollTop = 0;
+}
+
+prev.addEventListener('click', () => go(cur - 1));
+next.addEventListener('click', () => go(cur + 1));
+dots.forEach((d, i) => d.addEventListener('click', () => go(i)));
+document.addEventListener('keydown', e => {
+  if(e.key === 'ArrowRight' || e.key === 'ArrowDown') go(cur + 1);
+  if(e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(cur - 1);
+});
+go(0);
+</script>
+</body>
+</html>

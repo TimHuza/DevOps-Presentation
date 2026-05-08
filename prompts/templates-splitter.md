@@ -1,0 +1,3 @@
+I want you to split the of the html file to the sections. So like each content for linux sections, create a `01-linux.html` file. Same for all the files. Each file name should be like `01-linux.html`, `02-network-basics.html`, etc. But don't change the style of the presentation, don't change the content, don't change the presentation I mean how it's working just split it into sections, like each slide should be a separate html file.
+
+But make `index.thml` file that contains all the sections. So it combines all the sections in that single index page.

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>DevOps Presentation – Tim Huza</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117;--surface:#161b22;--border:#30363d;
+  --text:#e6edf3;--muted:#8b949e;
+  --accent:#f97316;--blue:#58a6ff;--cyan:#06b6d4;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  overflow:hidden}
+
+/* shell */
+.deck{position:relative;width:100vw;height:100vh;overflow:hidden}
+.slide{
+  position:absolute;inset:0;bottom:52px;
+  display:none;flex-direction:column;overflow:hidden;
+  background:var(--bg);
+}
+.slide.active{display:flex}
+
+/* TITLE SLIDE */
+.title-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;height:100%;text-align:center;
+  background:radial-gradient(ellipse at 50% 0%,#1e1b4b 0%,#0d1117 70%);
+  padding:2rem;
+}
+.title-wrap .hero-icon{font-size:6rem;margin-bottom:1rem;
+  filter:drop-shadow(0 0 30px rgba(249,115,22,.5))}
+.title-wrap h1{
+  font-size:clamp(2.2rem,5vw,4rem);font-weight:800;
+  background:linear-gradient(90deg,#f97316,#f59e0b);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:.5rem;letter-spacing:-1px;
+}
+.title-wrap .sub{font-size:1.15rem;color:var(--muted);margin-bottom:1.5rem}
+.title-wrap .author{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:999px;padding:.45rem 1.4rem;font-size:1rem;
+  font-weight:600;margin-bottom:2rem;
+}
+.chips{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;max-width:520px}
+.chip{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:.4rem .9rem;font-size:.82rem;color:var(--muted);
+}
+
+/* CONTENT SLIDE */
+.s-head{
+  display:flex;align-items:center;gap:1rem;
+  padding:.9rem 2rem;background:var(--surface);
+  border-bottom:3px solid var(--accent);flex-shrink:0;
+}
+.s-num{
+  font-size:2rem;font-weight:900;min-width:3rem;
+  background:linear-gradient(135deg,var(--accent),#f59e0b);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.s-title{font-size:1.5rem;font-weight:700}
+.s-logo{height:42px;object-fit:contain;margin-left:auto;
+  filter:drop-shadow(0 0 6px rgba(255,255,255,.15))}
+
+.s-body{
+  flex:1;overflow-y:auto;padding:1.4rem 2rem 1rem;
+  display:flex;flex-direction:column;gap:.6rem;
+}
+.s-body::-webkit-scrollbar{width:5px}
+.s-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* two-col */
+.cols{display:grid;grid-template-columns:1fr auto;gap:1.5rem;align-items:start}
+.cols img{max-height:260px;max-width:340px;width:100%;
+  border-radius:10px;border:1px solid var(--border);
+  object-fit:contain;background:var(--surface);padding:.4rem}
+@media(max-width:700px){.cols{grid-template-columns:1fr}}
+
+/* single centered image */
+.img-center{
+  display:block;max-width:100%;max-height:280px;
+  object-fit:contain;border-radius:10px;
+  border:1px solid var(--border);background:var(--surface);
+  padding:.5rem;margin:.4rem auto;
+}
+
+/* typography */
+h2{font-size:1.35rem;font-weight:700;color:var(--blue);
+  padding-left:.7rem;border-left:3px solid var(--accent);margin-top:.6rem}
+h3{font-size:1.05rem;font-weight:600;color:var(--text);margin-top:.7rem}
+p{line-height:1.7;color:#c9d1d9}
+strong{color:var(--text)}
+ul,ol{margin:.3rem 0 .3rem 1.4rem;color:#c9d1d9}
+li{margin:.25rem 0;line-height:1.6}
+ul li::marker{color:var(--accent)}
+ol li::marker{color:var(--blue);font-weight:700}
+
+/* tip */
+.tip{
+  background:rgba(6,182,212,.08);border-left:3px solid var(--cyan);
+  border-radius:0 8px 8px 0;padding:.5rem 1rem;
+  color:#67e8f9;font-size:.95rem;
+}
+.warn{
+  background:rgba(249,115,22,.08);border-left:3px solid var(--accent);
+  border-radius:0 8px 8px 0;padding:.5rem 1rem;
+  color:#fdba74;font-size:.95rem;
+}
+
+/* code */
+code{
+  font-family:Consolas,'JetBrains Mono','Courier New',monospace;
+  font-size:.84em;background:#1a2233;color:#79c0ff;
+  padding:.1em .35em;border-radius:4px;
+}
+pre{
+  background:#0d1117;border:1px solid var(--border);border-radius:10px;
+  padding:1rem 1.2rem;overflow-x:auto;margin:.4rem 0;
+}
+pre code{background:transparent;color:#e6edf3;padding:0;font-size:.88rem;line-height:1.65}
+
+/* table */
+.tw{overflow-x:auto;margin:.4rem 0}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th{background:#1f2937;color:var(--text);font-weight:600;
+   padding:.55rem .9rem;border:1px solid var(--border);text-align:left}
+td{padding:.5rem .9rem;border:1px solid var(--border);color:#c9d1d9}
+tr:hover td{background:rgba(249,115,22,.05)}
+
+/* key takeaway box */
+.takeaway{
+  background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(245,158,11,.08));
+  border:1px solid rgba(249,115,22,.3);border-radius:12px;
+  padding:1.2rem 1.5rem;margin-top:.8rem;
+}
+.takeaway p{color:#fdba74;font-size:1.05rem;line-height:1.7}
+
+/* summary grid */
+.sum-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:.75rem;margin-top:.5rem;
+}
+.sum-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:.75rem 1rem;font-size:.9rem;color:#c9d1d9;
+}
+.sum-card .ico{font-size:1.4rem;display:block;margin-bottom:.3rem}
+
+/* nav */
+.nav{
+  position:fixed;bottom:0;left:0;right:0;height:52px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 1.2rem;
+  background:rgba(13,17,23,.97);backdrop-filter:blur(12px);
+  border-top:1px solid var(--border);z-index:999;
+}
+.nbtn{
+  background:var(--surface);border:1px solid var(--border);
+  color:var(--text);padding:.4rem 1.1rem;border-radius:8px;
+  font-size:.88rem;font-weight:500;cursor:pointer;transition:all .18s;
+}
+.nbtn:hover{border-color:var(--accent);color:var(--accent)}
+.nbtn:disabled{opacity:.3;cursor:not-allowed}
+.nav-mid{display:flex;align-items:center;gap:.5rem}
+.dot{
+  width:8px;height:8px;border-radius:50%;background:var(--border);
+  cursor:pointer;border:none;transition:all .2s;padding:0;
+}
+.dot.on{background:var(--accent);transform:scale(1.5)}
+.ctr{font-size:.8rem;color:var(--muted);margin-left:.4rem;min-width:50px;text-align:center}
+/* per-topic accent overrides */
+.net{--accent:#06b6d4}
+.git-gh{--accent:#f43f5e}
+.jenkins{--accent:#8b5cf6}
+.cicd{--accent:#10b981}
+.pipe{--accent:#eab308}
+.docker{--accent:#3b82f6}
+.k8s{--accent:#326ce5}
+.ansible{--accent:#dc2626}
+.terraform{--accent:#844FBA}
+.iac{--accent:#14b8a6}
+.python{--accent:#ca8a04}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<section class="slide ansible" id="s39">
+  <div class="s-head">
+    <div class="s-num">39</div>
+    <div class="s-title">🤖 Ansible</div>
+    <img class="s-logo" src="../static/images/ansible/ansible-logo.png" alt="Ansible">
+  </div>
+  <div class="s-body">
+    <div class="cols">
+      <div>
+        <h2>📌 What is Ansible?</h2>
+        <p>Ansible is an <strong>automation tool</strong> used to manage and configure servers.</p>
+        <ul>
+          <li>Open-source</li>
+          <li>Simple and easy to use</li>
+          <li>Works over SSH</li>
+        </ul>
+        <div class="tip" style="margin-top:1rem">💡 Used in DevOps to automate repetitive tasks</div>
+
+        <h2 style="margin-top:1.2rem">🧠 Configuration Management</h2>
+        <p>Keeping systems <strong>consistent and correctly configured</strong>:</p>
+        <ul>
+          <li>Installing software</li>
+          <li>Updating servers</li>
+          <li>Managing settings</li>
+        </ul>
+        <div class="tip" style="margin-top:1rem">💡 Instead of doing tasks manually, Ansible automates them</div>
+      </div>
+      <img src="../static/images/ansible/ansible-logo.png" alt="Ansible" style="max-height:220px;max-width:240px;border-radius:10px;border:1px solid var(--border);object-fit:contain;background:var(--surface);padding:.5rem">
+    </div>
+  </div>
+</section>
+
+<section class="slide ansible" id="s40">
+  <div class="s-head">
+    <div class="s-num">40</div>
+    <div class="s-title">🤖 Ansible — Agentless &amp; Architecture</div>
+    <img class="s-logo" src="../static/images/ansible/ansible-logo.png" alt="Ansible">
+  </div>
+  <div class="s-body">
+    <h2>🤖 Agent vs Agentless</h2>
+    <div class="sum-grid" style="margin-top:.8rem">
+      <div class="sum-card">
+        <span class="ico">🛡️</span>
+        <strong>Agent-Based:</strong><br>
+        <span style="font-size:.85rem;color:var(--muted)">Requires software installed on each server.</span>
+      </div>
+      <div class="sum-card">
+        <span class="ico">🚀</span>
+        <strong>Agentless (Ansible):</strong><br>
+        <span style="font-size:.85rem;color:var(--muted)">No software needed on target machines. Uses SSH to connect.</span>
+      </div>
+    </div>
+    <div class="takeaway" style="margin-top:1rem">
+      <p>✅ Ansible is <strong>agentless</strong>, making it simple and lightweight</p>
+    </div>
+
+    <h2 style="margin-top:1.2rem">🏗️ Ansible Architecture</h2>
+    <p>Ansible has a simple structure:</p>
+    <ul>
+      <li><strong>Control Node</strong> → where Ansible runs</li>
+      <li><strong>Managed Nodes</strong> → servers being controlled</li>
+    </ul>
+    <pre><code>Control Node ---> Managed Nodes</code></pre>
+    <div class="tip" style="margin-top:.8rem">💡 One control node can manage many servers</div>
+  </div>
+</section>
+
+<section class="slide ansible" id="s41">
+  <div class="s-head">
+    <div class="s-num">41</div>
+    <div class="s-title">🤖 Ansible — Playbooks &amp; YAML</div>
+    <img class="s-logo" src="../static/images/ansible/ansible-logo.png" alt="Ansible">
+  </div>
+  <div class="s-body">
+    <h2>📜 Playbooks and YAML</h2>
+    <p>Ansible uses <strong>Playbooks</strong> to define tasks.</p>
+    <ul>
+      <li>Written in <strong>YAML</strong> (easy to read)</li>
+      <li>Describe what actions to perform</li>
+    </ul>
+
+    <h3 style="margin-top:1.2rem">Example Playbook:</h3>
+    <pre><code class="lang-yaml">- name: Install nginx
+  hosts: web
+  tasks:
+    - name: Install package
+      apt:
+        name: nginx
+        state: present</code></pre>
+  </div>
+</section>
+
+<section class="slide ansible" id="s42">
+  <div class="s-head">
+    <div class="s-num">42</div>
+    <div class="s-title">🤖 Ansible — Inventory &amp; Summary</div>
+    <img class="s-logo" src="../static/images/ansible/ansible-logo.png" alt="Ansible">
+  </div>
+  <div class="s-body">
+    <h2>🗂️ Inventory</h2>
+    <p>An inventory file tells Ansible which servers to manage.</p>
+    <ul>
+      <li>Groups servers together</li>
+      <li>Used by playbooks</li>
+    </ul>
+    <h3 style="margin-top:1.2rem">Example <code>inventory.ini</code>:</h3>
+    <pre><code class="lang-ini">[web]
+192.168.1.10
+192.168.1.11</code></pre>
+
+    <h2 style="margin-top:1.2rem">🚀 Summary</h2>
+    <div class="sum-grid">
+      <div class="sum-card"><span class="ico">⚙️</span><strong>Automates</strong> configuration management</div>
+      <div class="sum-card"><span class="ico">🚀</span><strong>Agentless</strong> architecture (uses SSH)</div>
+      <div class="sum-card"><span class="ico">📜</span>Uses simple <strong>YAML Playbooks</strong></div>
+      <div class="sum-card"><span class="ico">🗂️</span>Manages servers via <strong>Inventory</strong></div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<!-- ═══════════════ NAV ═══════════════ -->
+<nav class="nav">
+  <button class="nbtn" id="btn-prev">&#8592; Prev</button>
+  <div class="nav-mid">
+    <button class="dot on" title="What is Ansible?"></button>
+    <button class="dot" title="Agentless &amp; Architecture"></button>
+    <button class="dot" title="Playbooks &amp; YAML"></button>
+    <button class="dot" title="Inventory &amp; Summary"></button>
+    <span class="ctr" id="ctr">1 / 4</span>
+  </div>
+  <button class="nbtn" id="btn-next">Next &#8594;</button>
+</nav>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const dots   = document.querySelectorAll('.dot');
+const ctr    = document.getElementById('ctr');
+const prev   = document.getElementById('btn-prev');
+const next   = document.getElementById('btn-next');
+let cur = 0;
+
+function go(n){
+  slides[cur].classList.remove('active');
+  dots[cur].classList.remove('on');
+  cur = Math.max(0, Math.min(n, slides.length - 1));
+  slides[cur].classList.add('active');
+  dots[cur].classList.add('on');
+  ctr.textContent = (cur + 1) + ' / ' + slides.length;
+  prev.disabled = cur === 0;
+  next.disabled = cur === slides.length - 1;
+  const body = slides[cur].querySelector('.s-body');
+  if(body) body.scrollTop = 0;
+}
+
+prev.addEventListener('click', () => go(cur - 1));
+next.addEventListener('click', () => go(cur + 1));
+dots.forEach((d, i) => d.addEventListener('click', () => go(i)));
+document.addEventListener('keydown', e => {
+  if(e.key === 'ArrowRight' || e.key === 'ArrowDown') go(cur + 1);
+  if(e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(cur - 1);
+});
+go(0);
+</script>
+</body>
+</html>

@@ -1,0 +1,2 @@
+I've inserted voices that should play when I switch to that slide number in `/static/voices/`
+for example is I switch to the **01 🐧 Linux** then the `01-linux.mp3` file should play. apply to those all 6 slides/sections. again they should play immidiately when I go to that slide/section
