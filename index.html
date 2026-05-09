@@ -193,6 +193,33 @@ tr:hover td{background:rgba(249,115,22,.05)}
 .terraform{--accent:#844FBA}
 .iac{--accent:#14b8a6}
 .python{--accent:#ca8a04}
+
+/* Linux company logo slider */
+.linux-slider-box {
+  width: 260px;
+  height: 150px;
+  background: #fff;
+  border: 1px solid #e1e4e8;
+  border-radius: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  margin: 1rem 0;
+  position: relative;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+}
+.linux-slider-box img {
+  position: absolute;
+  max-width: 72%;
+  max-height: 72%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.linux-slider-box img.active {
+  opacity: 1;
+}
 </style>
 </head>
 <body>
@@ -320,6 +347,21 @@ async function loadPresentation() {
       audio.play().catch(e => console.warn("Autoplay blocked or audio error:", e));
     }
   }
+
+  // -- logo slider --
+  function initSliders() {
+    document.querySelectorAll('.linux-slider-box').forEach(box => {
+      const imgs = Array.from(box.querySelectorAll('img'));
+      if (imgs.length < 2) return;
+      let idx = 0;
+      setInterval(() => {
+        imgs[idx].classList.remove('active');
+        idx = (idx + 1) % imgs.length;
+        imgs[idx].classList.add('active');
+      }, 3000);
+    });
+  }
+  initSliders();
 
   go(0);
 }

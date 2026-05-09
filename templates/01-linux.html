@@ -172,7 +172,9 @@ tr:hover td{background:rgba(249,115,22,.05)}
   cursor:pointer;border:none;transition:all .2s;padding:0;
 }
 .dot.on{background:var(--accent);transform:scale(1.5)}
-.ctr{font-size:.8rem;color:var(--muted);margin-left:.4rem;min-width:50px;text-align:center}
+.ctr{
+  font-size:.8rem;color:var(--muted);margin-left:.4rem;min-width:50px;text-align:center
+}
 /* per-topic accent overrides */
 .net{--accent:#06b6d4}
 .git-gh{--accent:#f43f5e}
@@ -211,7 +213,25 @@ tr:hover td{background:rgba(249,115,22,.05)}
           <li>🖥️ <strong>Hardware</strong> → keyboard, screen, CPU, memory, hard drive</li>
           <li>📱 <strong>Software</strong> → apps, games, browsers, tools</li>
         </ul>
-        <h2>🤔 So What Makes Linux Special?</h2>
+        <h3 style="margin-top:1rem">🏢 Big Companies That Use Linux:</h3>
+        <div class="chips" style="justify-content:flex-start;margin-top:.5rem">
+          <span class="chip">Google</span> <span class="chip">Amazon</span>
+          <span class="chip">Netflix</span> <span class="chip">Meta</span>
+          <span class="chip">Tesla</span> <span class="chip">Uber</span>
+          <span class="chip">Spotify</span>
+        </div>
+
+        <div class="linux-slider-box" id="linux-logo-slider">
+          <img src="static/images-slide/linux/google.png"  class="active" alt="Google">
+          <img src="static/images-slide/linux/amazon.png"  alt="Amazon">
+          <img src="static/images-slide/linux/netflix.png" alt="Netflix">
+          <img src="static/images-slide/linux/meta.png"    alt="Meta">
+          <img src="static/images-slide/linux/tesla.png"   alt="Tesla">
+          <img src="static/images-slide/linux/uber.png"    alt="Uber">
+          <img src="static/images-slide/linux/spotify.png" alt="Spotify">
+        </div>
+        
+        <h2 style="margin-top:25px">🤔 So What Makes Linux Special?</h2>
         <p>Linux is preferred by developers and IT professionals for several reasons:</p>
         <div class="sum-grid" style="margin-top:1rem">
           <div class="sum-card"><span class="ico">🔓</span><strong>Open-source</strong></div>
@@ -221,14 +241,6 @@ tr:hover td{background:rgba(249,115,22,.05)}
           <div class="sum-card"><span class="ico">🛠️</span><strong>Customizable</strong></div>
         </div>
         <div class="tip" style="margin-top:1rem">💡 Many developers and IT professionals prefer Linux because of its power and flexibility.</div>
-        
-        <h3 style="margin-top:1rem">🏢 Big Companies That Use Linux:</h3>
-        <div class="chips" style="justify-content:flex-start;margin-top:.5rem">
-          <span class="chip">Google</span> <span class="chip">Amazon</span>
-          <span class="chip">Netflix</span> <span class="chip">Meta</span>
-          <span class="chip">Tesla</span> <span class="chip">Uber</span>
-          <span class="chip">Spotify</span>
-        </div>
       </div>
         <img src="../static/images/linux/linux-logo.png" alt="Linux">
     </div>
@@ -496,6 +508,34 @@ document.addEventListener('keydown', e => {
   if(e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(cur - 1);
 });
 go(0);
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const images = [
+        "static/images-slide/linux/amazon.png",
+        "static/images-slide/linux/google.png",
+        "static/images-slide/linux/meta.png",
+        "static/images-slide/linux/netflix.png",
+        "static/images-slide/linux/spotify.png",
+        "static/images-slide/linux/tesla.png",
+        "static/images-slide/linux/uber.png"
+    ];
+
+    let index = 0;
+    const logo = document.getElementById("linuxLogo");
+
+    setInterval(() => {
+        logo.style.opacity = 0;
+
+        setTimeout(() => {
+            index = (index + 1) % images.length;
+            logo.src = images[index];
+            logo.style.opacity = 1;
+        }, 400);
+
+    }, 3000);
+
+});
 </script>
 </body>
 </html>
