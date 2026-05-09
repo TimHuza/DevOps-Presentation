@@ -156,8 +156,46 @@ tr:hover td{background:rgba(249,115,22,.05)}
 .sum-card{
   background:var(--surface);border:1px solid var(--border);
   border-radius:10px;padding:.75rem 1rem;font-size:.9rem;color:#c9d1d9;
+  cursor:default;
+  transition:border-color .2s, transform .2s, box-shadow .2s;
+}
+.sum-card:hover{
+  border-color:var(--accent);
+  transform:translateY(-3px);
+  box-shadow:0 6px 20px rgba(249,115,22,.18);
 }
 .sum-card .ico{font-size:1.4rem;display:block;margin-bottom:.3rem}
+
+/* tooltip pointing out of the card */
+.sum-card{
+  position:relative;
+}
+.sum-card .tooltip{
+  position:absolute;
+  bottom:calc(100% + 10px);
+  left:50%;
+  transform:translateX(-50%) translateY(8px);
+  background:rgba(15,20,30,.98);
+  border:1px solid rgba(249,115,22,.45);
+  border-radius:8px;
+  padding:.75rem 1rem;
+  font-size:.85rem;
+  color:#e6edf3;
+  line-height:1.5;
+  white-space:normal;
+  min-width:220px;
+  max-width:280px;
+  text-align:center;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .25s ease, transform .25s ease;
+  z-index:100;
+  box-shadow:0 8px 24px rgba(0,0,0,.6);
+}
+.sum-card:hover .tooltip{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
 
 /* nav */
 .nav{
