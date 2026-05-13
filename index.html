@@ -177,20 +177,30 @@ tr:hover td{background:rgba(249,115,22,.05)}
   transform:translateX(-50%) translateY(8px);
   background:rgba(15,20,30,.98);
   border:1px solid rgba(249,115,22,.45);
-  border-radius:8px;
-  padding:.75rem 1rem;
-  font-size:.85rem;
+  border-radius:10px;
+  padding:1rem 1.25rem;
+  font-size:.9rem;
   color:#e6edf3;
   line-height:1.5;
   white-space:normal;
-  min-width:220px;
-  max-width:280px;
-  text-align:center;
+  min-width:320px;
+  max-width:380px;
+  text-align:left;
   pointer-events:none;
   opacity:0;
   transition:opacity .25s ease, transform .25s ease;
   z-index:100;
   box-shadow:0 8px 24px rgba(0,0,0,.6);
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+.sum-card .tooltip .tooltip-img {
+  width:70px;
+  height:70px;
+  object-fit:contain;
+  flex-shrink:0;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,0.5));
 }
 .sum-card:hover .tooltip{
   opacity:1;
