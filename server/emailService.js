@@ -39,21 +39,13 @@ async function sendInvitation(toEmail, firstName) {
     const devopsPresentationPath = path.join(__dirname, '../email/static/devops-presentation.png');
 
     if (useResend) {
-      // For Resend API, we encode attachments to Base64
-      if (fs.existsSync(timHuzaPhotoPath)) {
-        attachments.push({
-          filename: 'tim-huza.png',
-          content: fs.readFileSync(timHuzaPhotoPath).toString('base64'),
-          contentId: 'tim-huza', // Matches src="cid:tim-huza"
-        });
-      }
-      if (fs.existsSync(devopsPresentationPath)) {
-        attachments.push({
-          filename: 'devops-presentation.png',
-          content: fs.readFileSync(devopsPresentationPath).toString('base64'),
-          contentId: 'devops-presentation', // Matches src="cid:devops-presentation"
-        });
-      }
+      // For Resend API, to guarantee delivery and correct image rendering in Gmail,
+      // we reference the images directly from your public GitHub repository.
+      // This also slashes email size from ~1.5MB to just ~20KB, preventing spam filter triggers!
+      const githubRepoBase = 'https://raw.githubusercontent.com/TimHuza/DevOps-Presentation/main/email/static';
+      htmlContent = htmlContent
+        .replace(/cid:tim-huza/g, `${githubRepoBase}/tim-huza.png`)
+        .replace(/cid:devops-presentation/g, `${githubRepoBase}/devops-presentation.png`);
     } else {
       // For Nodemailer SMTP
       if (fs.existsSync(timHuzaPhotoPath)) {
