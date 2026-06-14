@@ -15,14 +15,111 @@ try {
  * @returns {Promise<{success: boolean, messageId?: string, previewUrl?: string, error?: any}>}
  */
 async function sendInvitation(toEmail, firstName) {
-  // 1. Check if nodemailer is installed
+  // 1. Check if we should use Resend API (HTTP-based) instead of SMTP
+  const useResend = !!process.env.RESEND_API_KEY;
+
+  // 2. Load the HTML template
+  let htmlContent;
+  let attachments = [];
+  try {
+    const templatePath = path.join(__dirname, '../email/email_template.html');
+    if (!fs.existsSync(templatePath)) {
+      throw new Error(`Email template not found at: ${templatePath}`);
+    }
+    htmlContent = fs.readFileSync(templatePath, 'utf8');
+
+    // Interpolate variables
+    const presentationUrl = process.env.PRESENTATION_URL || 'http://localhost:3001';
+    htmlContent = htmlContent
+      .replace(/\{\{first_name\}\}/g, firstName)
+      .replace(/\{\{presentation_url\}\}/g, presentationUrl);
+
+    // Define attachment paths
+    const timHuzaPhotoPath = path.join(__dirname, '../email/static/tim-huza.png');
+    const devopsPresentationPath = path.join(__dirname, '../email/static/devops-presentation.png');
+
+    if (useResend) {
+      // For Resend API, we encode attachments to Base64
+      if (fs.existsSync(timHuzaPhotoPath)) {
+        attachments.push({
+          filename: 'tim-huza.png',
+          content: fs.readFileSync(timHuzaPhotoPath).toString('base64'),
+          contentId: 'tim-huza', // Matches src="cid:tim-huza"
+        });
+      }
+      if (fs.existsSync(devopsPresentationPath)) {
+        attachments.push({
+          filename: 'devops-presentation.png',
+          content: fs.readFileSync(devopsPresentationPath).toString('base64'),
+          contentId: 'devops-presentation', // Matches src="cid:devops-presentation"
+        });
+      }
+    } else {
+      // For Nodemailer SMTP
+      if (fs.existsSync(timHuzaPhotoPath)) {
+        attachments.push({
+          filename: 'tim-huza.png',
+          path: timHuzaPhotoPath,
+          cid: 'tim-huza',
+        });
+      }
+      if (fs.existsSync(devopsPresentationPath)) {
+        attachments.push({
+          filename: 'devops-presentation.png',
+          path: devopsPresentationPath,
+          cid: 'devops-presentation',
+        });
+      }
+    }
+  } catch (error) {
+    console.error('❌ [Email Service] Failed to load email assets:', error.message);
+    return { success: false, error: error };
+  }
+
+  // --- Option B: Resend HTTP API ---
+  if (useResend) {
+    try {
+      console.log('ℹ️ [Email Service] Using Resend HTTP API to send email...');
+      
+      // Resend onboarding sender is "onboarding@resend.dev" by default
+      const fromEmail = process.env.SMTP_FROM || 'onboarding@resend.dev';
+      
+      const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: fromEmail,
+          to: toEmail,
+          subject: "You're Invited: DevOps Presentation",
+          html: htmlContent,
+          attachments: attachments
+        })
+      });
+
+      const resData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(resData.message || `HTTP error! status: ${response.status}`);
+      }
+
+      console.log(`✅ [Email Service] Invitation successfully sent via Resend to ${toEmail}. MessageID: ${resData.id}`);
+      return { success: true, messageId: resData.id };
+    } catch (error) {
+      console.error('❌ [Email Service] Resend API failed to send email:', error.message);
+      return { success: false, error: error };
+    }
+  }
+
+  // --- Option A / Fallback: SMTP / Nodemailer ---
   if (!nodemailer) {
     console.warn('\n⚠️ [Email Service] Warning: "nodemailer" is not installed.');
     console.warn('   To enable automatic email invitations, run: npm install nodemailer\n');
     return { success: false, error: 'nodemailer_not_installed' };
   }
 
-  // 2. Setup transporter (configured SMTP or Ethereal test account fallback)
   let transporter;
   let isDefaultSMTP = !process.env.SMTP_HOST || process.env.SMTP_HOST === 'smtp.example.com' || !process.env.SMTP_USER || !process.env.SMTP_PASS;
 
@@ -33,10 +130,10 @@ async function sendInvitation(toEmail, firstName) {
       transporter = nodemailer.createTransport({
         host: 'smtp.ethereal.email',
         port: 587,
-        secure: false, // true for 465, false for other ports
+        secure: false,
         auth: {
-          user: testAccount.user, // generated ethereal user
-          pass: testAccount.pass, // generated ethereal password
+          user: testAccount.user,
+          pass: testAccount.pass,
         },
       });
       console.log(`🔑 [Email Service] Ethereal test account created: User=${testAccount.user}`);
@@ -44,7 +141,7 @@ async function sendInvitation(toEmail, firstName) {
       transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
         port: parseInt(process.env.SMTP_PORT || '587', 10),
-        secure: process.env.SMTP_PORT === '465', // true for 465, false for others
+        secure: process.env.SMTP_PORT === '465',
         auth: {
           user: process.env.SMTP_USER,
           pass: process.env.SMTP_PASS,
@@ -57,45 +154,6 @@ async function sendInvitation(toEmail, firstName) {
   }
 
   try {
-    // 3. Load the HTML template
-    const templatePath = path.join(__dirname, '../email/email_template.html');
-    if (!fs.existsSync(templatePath)) {
-      throw new Error(`Email template not found at: ${templatePath}`);
-    }
-    let htmlContent = fs.readFileSync(templatePath, 'utf8');
-
-    // 4. Interpolate variables
-    const presentationUrl = process.env.PRESENTATION_URL || 'http://localhost:3001';
-    htmlContent = htmlContent
-      .replace(/\{\{first_name\}\}/g, firstName)
-      .replace(/\{\{presentation_url\}\}/g, presentationUrl);
-
-    // 5. Define attachment paths
-    const timHuzaPhotoPath = path.join(__dirname, '../email/static/tim-huza.png');
-    const devopsPresentationPath = path.join(__dirname, '../email/static/devops-presentation.png');
-
-    const attachments = [];
-    if (fs.existsSync(timHuzaPhotoPath)) {
-      attachments.push({
-        filename: 'tim-huza.png',
-        path: timHuzaPhotoPath,
-        cid: 'tim-huza', // matches src="cid:tim-huza"
-      });
-    } else {
-      console.warn(`⚠️ [Email Service] Warning: Profile photo not found at ${timHuzaPhotoPath}`);
-    }
-
-    if (fs.existsSync(devopsPresentationPath)) {
-      attachments.push({
-        filename: 'devops-presentation.png',
-        path: devopsPresentationPath,
-        cid: 'devops-presentation', // matches src="cid:devops-presentation"
-      });
-    } else {
-      console.warn(`⚠️ [Email Service] Warning: Presentation image not found at ${devopsPresentationPath}`);
-    }
-
-    // 6. Mail options
     const mailOptions = {
       from: isDefaultSMTP ? '"Tim Huza (DevOps Presentation)" <invitations@example.com>' : (process.env.SMTP_FROM || '"Tim Huza" <invitations@example.com>'),
       to: toEmail,
@@ -104,7 +162,6 @@ async function sendInvitation(toEmail, firstName) {
       attachments: attachments,
     };
 
-    // 7. Send the mail
     const info = await transporter.sendMail(mailOptions);
     console.log(`✅ [Email Service] Invitation successfully sent to ${toEmail}. MessageID: ${info.messageId}`);
     
