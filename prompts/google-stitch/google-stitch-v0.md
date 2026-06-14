@@ -1,0 +1,2 @@
+I want to try to make this entire presentation with new `Google Stitch`.
+can you create a professional prompt to create the same presentattion but add a `MySQL` database that can allow you sign up for that presentation and save the info for database. the sign up should ask for attander a name and last name and email! Create a professional prompt for that in `google-stitch.md` file in `prompts` file!

@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>DevOps — From Zero to Production</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Theme Config -->
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface": "#f6ded3",
+                        "tertiary-container": "#00a2f4",
+                        "on-secondary-container": "#f0f4ff",
+                        "on-primary-container": "#582200",
+                        "error": "#ffb4ab",
+                        "surface-tint": "#ffb690",
+                        "on-secondary": "#00315c",
+                        "inverse-primary": "#9d4300",
+                        "surface-container": "#291d16",
+                        "on-background": "#f6ded3",
+                        "outline": "#a78b7d",
+                        "surface": "#1c110b",
+                        "secondary-fixed-dim": "#a2c9ff",
+                        "error-container": "#93000a",
+                        "surface-container-low": "#251913",
+                        "on-primary": "#552100",
+                        "surface-variant": "#40322a",
+                        "surface-container-high": "#352720",
+                        "on-error": "#690005",
+                        "tertiary-fixed-dim": "#93ccff",
+                        "on-primary-fixed-variant": "#783200",
+                        "surface-container-lowest": "#160c06",
+                        "on-surface-variant": "#e0c0b1",
+                        "outline-variant": "#584237",
+                        "secondary": "#a2c9ff",
+                        "surface-container-highest": "#40322a",
+                        "background": "#0d1117",
+                        "on-tertiary-container": "#003554",
+                        "secondary-fixed": "#d3e4ff",
+                        "on-secondary-fixed-variant": "#004882",
+                        "tertiary-fixed": "#cde5ff",
+                        "on-secondary-fixed": "#001c38",
+                        "on-tertiary": "#003351",
+                        "primary-container": "#f97316",
+                        "primary-fixed-dim": "#ffb690",
+                        "on-tertiary-fixed": "#001d32",
+                        "inverse-on-surface": "#3c2d26",
+                        "on-primary-fixed": "#341100",
+                        "surface-bright": "#45362f",
+                        "on-tertiary-fixed-variant": "#004b74",
+                        "tertiary": "#93ccff",
+                        "primary": "#ffb690",
+                        "inverse-surface": "#f6ded3",
+                        "primary-fixed": "#ffdbca",
+                        "surface-dim": "#1c110b",
+                        "on-error-container": "#ffdad6",
+                        "secondary-container": "#0071c7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-md": "2rem",
+                        "stack-lg": "4rem",
+                        "safe-margin": "4rem",
+                        "stack-sm": "1rem",
+                        "gutter": "2rem"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "h2": ["Inter"],
+                        "h3": ["Inter"],
+                        "body-md": ["Inter"],
+                        "h1": ["Inter"],
+                        "code": ["JetBrains Mono"],
+                        "label-sm": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["1.25rem", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "h2": ["2.5rem", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "h3": ["1.75rem", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-md": ["1rem", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "h1": ["clamp(2.2rem, 5vw, 4rem)", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "code": ["0.95rem", { "lineHeight": "1.7", "fontWeight": "400" }],
+                        "label-sm": ["0.75rem", { "lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0d1117;
+            color: #f6ded3;
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            height: calc(100vh - 160px);
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .code-block {
+            background: #05070a;
+            border: 1px solid #30363d;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .glass-nav {
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+
+        .header-border {
+            height: 2px;
+            width: 100%;
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            background: linear-gradient(90deg, #f97316, #a2c9ff, #93ccff, #f97316);
+            background-size: 300% 300%;
+            animation: flow 4s ease infinite;
+        }
+
+        /* Hover effects */
+        .chip-hover:hover {
+            filter: brightness(1.2);
+            transform: translateY(-1px);
+        }
+
+        .card-hover:hover {
+            background-color: var(--tw-surface-container-high);
+            border-color: #ffb690;
+        }
+
+        /* Custom scrollbar for slides */
+        .slide::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .slide::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .slide::-webkit-scrollbar-thumb {
+            background: #40322a;
+            border-radius: 10px;
+        }
+
+        /* Modal transitions */
+        #register-modal {
+            transition: opacity 0.3s ease;
+        }
+
+        #register-modal.hidden {
+            opacity: 0;
+            pointer-events: none;
+            display: flex !important;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Success Animation */
+        @keyframes scaleIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            80% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-check {
+            animation: scaleIn 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+
+<body class="font-body-md text-body-md selection:bg-primary-container selection:text-on-primary-container">
+    <!-- Top AppBar -->
+    <header
+        class="fixed top-0 w-full z-40 bg-background/80 backdrop-blur-md flex justify-between items-center px-safe-margin h-20">
+        <div class="font-h3 text-h3 font-black text-on-background">DevOps Presentation</div>
+        <div class="flex items-center gap-4">
+            <span class="font-label-sm text-label-sm text-on-surface-variant">TIM HUZA — SESSION 2026</span>
+            <span class="material-symbols-outlined text-primary text-h3">account_circle</span>
+        </div>
+        <div class="header-border" id="header-animated-border"></div>
+    </header>
+    <!-- Slides Container -->
+    <main class="pt-20">
+        <!-- Slide 0: Title -->
+        <section class="slide active px-safe-margin flex flex-col justify-center items-center text-center" id="slide-0">
+            <div class="max-w-4xl py-20">
+                <h1 class="font-h1 text-h1 text-primary-container mb-6">DevOps — Presentation</h1>
+                <p class="font-h3 text-h3 text-on-surface mb-12">An end-to-end journey through modern infrastructure and
+                    automation</p>
+                <div class="flex flex-wrap justify-center gap-3 mb-12">
+                    <span
+                        class="px-4 py-1 rounded-full bg-surface-variant text-primary font-label-sm border border-outline-variant chip-hover transition-all cursor-default">LINUX</span>
+                    <span
+                        class="px-4 py-1 rounded-full bg-surface-variant text-secondary font-label-sm border border-outline-variant chip-hover transition-all cursor-default">NETWORKING</span>
+                    <span
+                        class="px-4 py-1 rounded-full bg-surface-variant text-tertiary font-label-sm border border-outline-variant chip-hover transition-all cursor-default">DOCKER</span>
+                    <span
+                        class="px-4 py-1 rounded-full bg-surface-variant text-primary-fixed-dim font-label-sm border border-outline-variant chip-hover transition-all cursor-default">K8S</span>
+                    <span
+                        class="px-4 py-1 rounded-full bg-surface-variant text-on-secondary-container font-label-sm border border-outline-variant chip-hover transition-all cursor-default">JENKINS</span>
+                </div>
+                <button
+                    class="px-8 py-4 bg-primary-container text-on-primary-container font-h3 rounded-xl hover:scale-105 transition-transform shadow-lg shadow-primary-container/20"
+                    onclick="openModal()">
+                    Register as Attendee
+                </button>
+            </div>
+
+        </section>
+        <!-- Slide 1: Linux -->
+        <section class="slide px-safe-margin py-stack-lg" id="slide-1">
+            <div class="grid md:grid-cols-2 gap-gutter items-start max-w-7xl mx-auto">
+                <div>
+                    <h2 class="font-h2 text-h2 text-primary border-l-4 border-primary pl-6 mb-8">Linux 🐧: The OS Bridge
+                    </h2>
+                    <p class="font-body-lg text-body-lg text-on-surface-variant mb-6">The invisible backbone of the
+                        cloud. From AWS to smart fridges, Linux powers the world.</p>
+                    <div class="space-y-4">
+                        <div
+                            class="p-4 bg-surface-container rounded-lg border border-outline-variant card-hover transition-colors">
+                            <h4 class="font-h3 text-h3 text-primary mb-2">Permissions Model</h4>
+                            <code
+                                class="font-code text-code text-secondary block p-2 code-block rounded">chmod 755 script.sh</code>
+                            <p class="text-label-sm mt-2">Owner: rwx | Group: r-x | Others: r-x</p>
+                        </div>
+                        <div class="p-4 border-l-4 border-tertiary-container bg-surface-container-low rounded">
+                            <span class="font-label-sm text-tertiary-container font-bold uppercase">Pro Tip</span>
+                            <p>Everything in Linux is a file—even your hardware devices.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-6">
+                    <div class="bg-surface-container-highest p-6 rounded-xl border border-outline-variant shadow-2xl">
+                        <table class="w-full font-code text-label-sm text-left">
+                            <thead>
+                                <tr class="border-b border-outline-variant">
+                                    <th class="py-2">Command</th>
+                                    <th class="py-2">Description</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-outline-variant">
+                                <tr class="hover:bg-surface-variant/30 transition-colors">
+                                    <td class="py-3 text-primary">ls -la</td>
+                                    <td>List all files with details</td>
+                                </tr>
+                                <tr class="hover:bg-surface-variant/30 transition-colors">
+                                    <td class="py-3 text-primary">grep "err"</td>
+                                    <td>Search text pattern</td>
+                                </tr>
+                                <tr class="hover:bg-surface-variant/30 transition-colors">
+                                    <td class="py-3 text-primary">top / htop</td>
+                                    <td>System monitor</td>
+                                </tr>
+                                <tr class="hover:bg-surface-variant/30 transition-colors">
+                                    <td class="py-3 text-primary">chown</td>
+                                    <td>Change file ownership</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <img alt="Workspace" class="w-full rounded-xl object-cover h-48 border border-outline-variant"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnZtvL7fRCYalEu-0cldPAV4EIIG3aYjbwTUxKU_hRsZkyBQrLjBw6v7fnAP-J3RuCOs3_DEnKZLRnk5UNQ4M5UOwWirN_WBhWF3GgEKFfQ1cnVJmVwVmvNkZjLFJPcKkUFOhgmzTiYoR_DcGr89QM3VUU7xQOyI5Nc87r94y_MCvmfmXbXehKOaiTV0sxrUpNjYYKXxvQIrEIP_7Hndc6k54dFpJzuaKe2-cWmmGiXbjZCzVFRDbBiMvUmz8HSbQZKgiUvZQ9hPc" />
+                </div>
+            </div>
+        </section>
+        <!-- Slide 2: Networking -->
+        <section class="slide px-safe-margin py-stack-lg" id="slide-2">
+            <div class="max-w-7xl mx-auto">
+                <h2 class="font-h2 text-h2 text-secondary mb-12 flex items-center gap-4">
+                    <span class="material-symbols-outlined text-h1">public</span> Network Basics 🌐
+                </h2>
+                <div class="grid md:grid-cols-4 gap-gutter">
+                    <div
+                        class="p-8 bg-surface-container border-b-4 border-secondary rounded-xl hover:translate-y-[-8px] transition-all duration-300 card-hover">
+                        <h3 class="font-h3 text-h3 text-secondary mb-4">IP / DNS</h3>
+                        <p class="text-on-surface-variant">The address book of the internet. Turning 192.168.1.1 into
+                            google.com.</p>
+                    </div>
+                    <div
+                        class="p-8 bg-surface-container border-b-4 border-tertiary rounded-xl hover:translate-y-[-8px] transition-all duration-300 card-hover">
+                        <h3 class="font-h3 text-h3 text-tertiary mb-4">HTTP/S</h3>
+                        <p class="text-on-surface-variant">The language of the web. Secure (Port 443) vs Unsecure (Port
+                            80).</p>
+                    </div>
+                    <div
+                        class="p-8 bg-surface-container border-b-4 border-primary rounded-xl hover:translate-y-[-8px] transition-all duration-300 card-hover">
+                        <h3 class="font-h3 text-h3 text-primary mb-4">TCP/UDP</h3>
+                        <p class="text-on-surface-variant">Reliability (TCP) vs Speed (UDP). The transport foundation.
+                        </p>
+                    </div>
+                    <div
+                        class="p-8 bg-surface-container border-b-4 border-on-secondary-container rounded-xl hover:translate-y-[-8px] transition-all duration-300 card-hover">
+                        <h3 class="font-h3 text-h3 text-on-secondary-container mb-4">LAN/WAN</h3>
+                        <p class="text-on-surface-variant">Private corporate networks vs the public wild west of the
+                            internet.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Slide 3: Git -->
+        <section class="slide px-safe-margin py-stack-lg" id="slide-3">
+            <div class="flex flex-col md:flex-row gap-gutter max-w-7xl mx-auto">
+                <div class="flex-1">
+                    <h2 class="font-h2 text-h2 text-primary-container mb-8">Git &amp; GitHub 🐙</h2>
+                    <div class="code-block p-6 rounded-xl mb-6 shadow-xl">
+                        <div class="flex gap-2 mb-4">
+                            <span class="w-3 h-3 rounded-full bg-error"></span>
+                            <span class="w-3 h-3 rounded-full bg-primary"></span>
+                            <span class="w-3 h-3 rounded-full bg-tertiary"></span>
+                        </div>
+                        <pre class="font-code text-code text-on-surface">git checkout -b feature/login
+# Make some changes
+git add .
+git commit -m "feat: implement auth"
+git push origin feature/login</pre>
+                    </div>
+                </div>
+                <div class="flex-1 grid grid-cols-2 gap-4">
+                    <div
+                        class="p-6 bg-surface-container rounded-xl border border-outline-variant card-hover transition-all cursor-default">
+                        <span class="material-symbols-outlined text-primary mb-4">account_tree</span>
+                        <h4 class="font-h3 text-h3">Branching</h4>
+                        <p class="text-label-sm text-on-surface-variant">Parallel development without fear.</p>
+                    </div>
+                    <div
+                        class="p-6 bg-surface-container rounded-xl border border-outline-variant card-hover transition-all cursor-default">
+                        <span class="material-symbols-outlined text-secondary mb-4">merge</span>
+                        <h4 class="font-h3 text-h3">Merging</h4>
+                        <p class="text-label-sm text-on-surface-variant">Integrating changes back to main.</p>
+                    </div>
+                    <div
+                        class="p-6 bg-surface-container rounded-xl border border-outline-variant card-hover transition-all cursor-default">
+                        <span class="material-symbols-outlined text-tertiary mb-4">reviews</span>
+                        <h4 class="font-h3 text-h3">Pull Request</h4>
+                        <p class="text-label-sm text-on-surface-variant">The core of team collaboration.</p>
+                    </div>
+                    <div
+                        class="p-6 bg-surface-container rounded-xl border border-outline-variant card-hover transition-all cursor-default">
+                        <span class="material-symbols-outlined text-primary-fixed-dim mb-4">history</span>
+                        <h4 class="font-h3 text-h3">VCS</h4>
+                        <p class="text-label-sm text-on-surface-variant">Time machine for your code.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Slide 4: Jenkins -->
+        <section class="slide px-safe-margin py-stack-lg" id="slide-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex items-center gap-6 mb-12">
+                    <img alt="Jenkins"
+                        class="w-32 h-32 rounded-2xl object-cover border-2 border-primary-container shadow-lg shadow-primary-container/20"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4S0qJsIlaHyVPXPj35n09RFPUHpKvIV07VlTMCXjzlKH4CaOxhAU43t9rfnLY-YHJuZnOvmC7wIRCikusbYEpMs1v5_oG3b1Vu49s3ksly8UxdqFwbLZq3Co5Qu3hek_jTpVK7gyh2LJpzH9cypnLhrNt_P1P8qSMOvWt7KHNnuO8Vc4WJI6c8V349oE8rAtWgdNn9i7HDoVzByoWtc82L-kv47dvrCCD1ia3yh3a_wfjxIH7Y7X6CcrwoyJXVXBrEJUfOhMZcFo" />
+                    <div>
+                        <h2 class="font-h2 text-h2 text-on-surface">Jenkins 🔧: The Butler</h2>
+                        <p class="font-h3 text-h3 text-on-surface-variant">The industry standard for CI/CD automation.
+                        </p>
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div
+                        class="bg-surface-container p-6 rounded-2xl border-l-4 border-primary card-hover transition-all">
+                        <h4 class="font-h3 text-h3 mb-4">Master/Slave</h4>
+                        <p class="text-on-surface-variant">Distributed architecture to handle thousands of concurrent
+                            builds.</p>
+                    </div>
+                    <div
+                        class="bg-surface-container p-6 rounded-2xl border-l-4 border-secondary card-hover transition-all">
+                        <h4 class="font-h3 text-h3 mb-4">Plugins</h4>
+                        <p class="text-on-surface-variant">1,800+ extensions to connect to almost any tool in the stack.
+                        </p>
+                    </div>
+                    <div
+                        class="bg-surface-container p-6 rounded-2xl border-l-4 border-tertiary card-hover transition-all">
+                        <h4 class="font-h3 text-h3 mb-4">Pipeline</h4>
+                        <p class="text-on-surface-variant">Moving from manual clicks to declarative 'Pipeline as Code'.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Slide 5: CI/CD -->
+        <section class="slide px-safe-margin py-stack-lg" id="slide-5">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="font-h1 text-h1 text-secondary mb-4">CI/CD ♾️</h2>
+                    <p class="font-h3 text-h3 text-on-surface-variant max-w-2xl mx-auto">Continuous Integration &amp;
+                        Continuous Delivery: The heartbeat of high-performing teams.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div
+                        class="p-8 bg-surface-container rounded-3xl border border-outline-variant relative overflow-hidden group hover:border-primary transition-colors cursor-default">
+                        <div
+                            class="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-all">
+                        </div>
+                        <h4 class="font-h3 text-h3 text-primary mb-4">Continuous Integration</h4>
+                        <p class="text-on-surface-variant">Automated testing and merging of code changes into a shared
+                            repository several times a day.</p>
+                    </div>
+                    <div
+                        class="p-8 bg-surface-container rounded-3xl border border-outline-variant relative overflow-hidden group hover:border-secondary transition-colors cursor-default">
+                        <div
+                            class="absolute top-0 right-0 w-32 h-32 bg-secondary/10 rounded-full blur-3xl group-hover:bg-secondary/20 transition-all">
+                        </div>
+                        <h4 class="font-h3 text-h3 text-secondary mb-4">Continuous Delivery</h4>
+                        <p class="text-on-surface-variant">Ensuring the codebase is always in a deployable state. Human
+                            approval for production.</p>
+                    </div>
+                    <div
+                        class="p-8 bg-surface-container rounded-3xl border border-outline-variant relative overflow-hidden group hover:border-tertiary transition-colors cursor-default">
+                        <div
+                            class="absolute top-0 right-0 w-32 h-32 bg-tertiary/10 rounded-full blur-3xl group-hover:bg-tertiary/20 transition-all">
+                        </div>
+                        <h4 class="font-h3 text-h3 text-tertiary mb-4">Continuous Deployment</h4>
+                        <p class="text-on-surface-variant">The ultimate goal: every change that passes the pipeline is
+                            automatically pushed to production.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Slide 6: Pipelines -->
+        <section class="slide px-safe-margin py-stack-lg" id="slide-6">
+            <div class="flex flex-col md:flex-row gap-gutter max-w-7xl mx-auto">
+                <div class="md:w-1/2">
+                    <h2 class="font-h2 text-h2 text-primary-fixed-dim mb-6">Pipelines 🔀</h2>
+                    <p class="font-body-lg text-body-lg mb-8">Pipeline as Code allows you to version control your build
+                        process alongside your application.</p>
+                    <div class="p-4 bg-error-container/20 border border-error text-error rounded-lg">
+                        <div class="flex items-center gap-2 mb-2 font-bold uppercase text-label-sm">
+                            <span class="material-symbols-outlined">warning</span> Important
+                        </div>
+                        Always prefer Declarative over Scripted pipelines for better readability and validation.
+                    </div>
+                </div>
+                <div class="md:w-1/2">
+                    <div class="code-block p-6 rounded-xl border-l-4 border-primary shadow-2xl">
+                        <div class="text-label-sm text-outline-variant mb-4 uppercase">Jenkinsfile (Declarative)</div>
+                        <pre class="font-code text-code text-on-tertiary-container">pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps { sh 'npm install' }
+        }
+        stage('Test') {
+            steps { sh 'npm test' }
+        }
+        stage('Deploy') {
+            steps { echo 'Deploying...' }
+        }
+    }
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Slide 7: Docker -->
+        <section class="slide px-safe-margin py-stack-lg" id="slide-7">
+            <div class="flex flex-col md:flex-row gap-gutter max-w-7xl mx-auto">
+                <div class="md:w-2/5">
+                    <h2 class="font-h2 text-h2 text-tertiary-container mb-6">Docker 🐳</h2>
+                    <p class="mb-8">Solve "It works on my machine" once and for all. Lightweight, portable containers.
+                    </p>
+                    <div class="space-y-4">
+                        <div
+                            class="p-4 bg-surface-container rounded border-l-4 border-tertiary-container card-hover transition-all">
+                            <h5 class="font-bold">Image</h5>
+                            <p class="text-label-sm">The immutable blueprint (The Recipe).</p>
+                        </div>
+                        <div
+                            class="p-4 bg-surface-container rounded border-l-4 border-secondary card-hover transition-all">
+                            <h5 class="font-bold">Container</h5>
+                            <p class="text-label-sm">The running instance (The Cake).</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:w-3/5">
+                    <div class="bg-surface-container p-6 rounded-2xl shadow-xl">
+                        <h4 class="font-h3 text-h3 mb-6">Docker vs Virtual Machines</h4>
+                        <div class="grid grid-cols-3 gap-4 text-center">
+                            <div class="pb-2 border-b border-outline-variant font-bold">Feature</div>
+                            <div class="pb-2 border-b border-outline-variant text-tertiary-container font-bold">Docker
+                            </div>
+                            <div class="pb-2 border-b border-outline-variant font-bold">VMs</div>
+                            <div class="py-2 border-b border-outline-variant/30 text-label-sm">Isolation</div>
+                            <div class="py-2 border-b border-outline-variant/30 text-label-sm">Process-level</div>
+                            <div class="py-2 border-b border-outline-variant/30 text-label-sm">OS-level</div>
+                            <div class="py-2 border-b border-outline-variant/30 text-label-sm">Boot Time</div>
+                            <div class="py-2 border-b border-outline-variant/30 text-label-sm">Seconds</div>
+                            <div class="py-2 border-b border-outline-variant/30 text-label-sm">Minutes</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Slide 8: Kubernetes -->
+        <section class="slide px-safe-margin py-stack-lg" id="slide-8">
+            <div class="max-w-7xl mx-auto">
+                <h2 class="font-h1 text-h1 text-on-secondary-container mb-12">Kubernetes ☸️</h2>
+                <div class="grid md:grid-cols-12 gap-8">
+                    <div class="md:col-span-4 space-y-6">
+                        <div
+                            class="p-6 bg-surface-container-high rounded-2xl border-l-8 border-tertiary card-hover transition-all">
+                            <h4 class="font-h3 text-h3">Control Plane</h4>
+                            <p class="text-on-surface-variant">The brain. Decides where pods should run and monitors
+                                health.</p>
+                        </div>
+                        <div
+                            class="p-6 bg-surface-container-high rounded-2xl border-l-8 border-primary card-hover transition-all">
+                            <h4 class="font-h3 text-h3">Worker Nodes</h4>
+                            <p class="text-on-surface-variant">The muscle. Hosts the containers and handles networking.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="md:col-span-8">
+                        <div
+                            class="h-full min-h-[400px] rounded-3xl bg-surface-container relative overflow-hidden border border-outline-variant shadow-2xl">
+                            <img alt="K8s cluster" class="absolute inset-0 w-full h-full object-cover opacity-40"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkTHrI9C17JijpL-5mn6x3E9xtBjt8WeJg-qwK_w6WyEjXqWM-K0CWAMfiMAUvy6O_cQmpfcW_LXBlq5OpRP2sffPdDarddljz75wQJeLsJu2x9ag9KgCUedUHHGFiRsyaRXuG6nyIiHCY3cjHQKy832U_wJLtGoBEvi0YExj1w-oXeonx986AvzgGAcrjZh9NXjg4HF49Qw4pLcGli8YWlMnKscCM1y_IB7tSQ7K2lN44gFcjKuRH-ep9eHfWxHYGCvPbZ_wfc4Y" />
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent">
+                            </div>
+                            <div class="absolute bottom-8 left-8">
+                                <h4 class="font-h2 text-h2 mb-2">Orchestration at Scale</h4>
+                                <p class="font-body-lg text-secondary">Self-healing, Auto-scaling, Rollouts.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Slide 9: Ansible -->
+        <section class="slide px-safe-margin py-stack-lg" id="slide-9">
+            <div class="max-w-5xl mx-auto">
+                <h2 class="font-h2 text-h2 text-primary-container mb-8">Ansible ⚙️: Configuration</h2>
+                <div class="grid md:grid-cols-2 gap-gutter">
+                    <div>
+                        <p class="font-body-lg text-body-lg mb-6">Agentless automation. If you have SSH access, you have
+                            Ansible power.</p>
+                        <ul class="space-y-4">
+                            <li class="flex items-center gap-3"><span
+                                    class="material-symbols-outlined text-primary">check_circle</span> Uses YAML: Human
+                                readable</li>
+                            <li class="flex items-center gap-3"><span
+                                    class="material-symbols-outlined text-primary">check_circle</span> Idempotent: Run
+                                100 times, same result</li>
+                            <li class="flex items-center gap-3"><span
+                                    class="material-symbols-outlined text-primary">check_circle</span> Push-based: No
+                                software to install on nodes</li>
+                        </ul>
+                    </div>
+                    <div class="code-block p-6 rounded-xl shadow-xl">
+                        <pre class="font-code text-code text-on-surface">- name: Install Nginx
+  hosts: webservers
+  become: yes
+  tasks:
+    - name: Ensure nginx is installed
+      apt:
+        name: nginx
+        state: present</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Slide 10: Terraform -->
+        <section class="slide px-safe-margin py-stack-lg" id="slide-10">
+            <div class="grid md:grid-cols-2 gap-gutter max-w-7xl mx-auto">
+                <div>
+                    <h2 class="font-h2 text-h2 text-tertiary mb-6">Terraform 🌿: Provisioning</h2>
+                    <p class="font-body-lg mb-8">Declare your infrastructure. Let Terraform build it across AWS, Azure,
+                        GCP, or VMware.</p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div
+                            class="p-4 bg-surface-container border border-tertiary/20 rounded card-hover transition-all">
+                            <h5 class="text-tertiary font-bold">Plan</h5>
+                            <p class="text-label-sm">Dry run before you apply.</p>
+                        </div>
+                        <div
+                            class="p-4 bg-surface-container border border-primary/20 rounded card-hover transition-all">
+                            <h5 class="text-primary font-bold">Apply</h5>
+                            <p class="text-label-sm">Execution of changes.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-block p-6 rounded-xl self-center shadow-xl">
+                    <pre class="font-code text-code text-on-surface">resource "aws_instance" "web" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+  
+  tags = {
+    Name = "HelloWorld"
+  }
+}</pre>
+                </div>
+            </div>
+        </section>
+        <!-- Slide 11: IaC -->
+        <section class="slide px-safe-margin py-stack-lg" id="slide-11">
+            <div class="max-w-7xl mx-auto">
+                <h2 class="font-h1 text-h1 text-on-secondary-container mb-8">Infrastructure as Code 🏗️</h2>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div
+                        class="bg-surface-container-low p-8 rounded-2xl border border-outline-variant flex flex-col items-center text-center card-hover transition-all">
+                        <span class="material-symbols-outlined text-h1 text-primary mb-6">cached</span>
+                        <h4 class="font-h3 text-h3 mb-4">Repeatability</h4>
+                        <p class="text-on-surface-variant">Destroy and rebuild your entire production environment in
+                            minutes, not days.</p>
+                    </div>
+                    <div
+                        class="bg-surface-container-low p-8 rounded-2xl border border-outline-variant flex flex-col items-center text-center card-hover transition-all">
+                        <span class="material-symbols-outlined text-h1 text-secondary mb-6">speed</span>
+                        <h4 class="font-h3 text-h3 mb-4">Speed</h4>
+                        <p class="text-on-surface-variant">Provision resources as fast as you can write code and run a
+                            pipeline.</p>
+                    </div>
+                    <div
+                        class="bg-surface-container-low p-8 rounded-2xl border border-outline-variant flex flex-col items-center text-center card-hover transition-all">
+                        <span class="material-symbols-outlined text-h1 text-tertiary mb-6">security</span>
+                        <h4 class="font-h3 text-h3 mb-4">Compliance</h4>
+                        <p class="text-on-surface-variant">Infrastructure becomes auditable via Git history. Security is
+                            built-in.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Slide 12: Python -->
+        <section class="slide px-safe-margin py-stack-lg" id="slide-12">
+            <div class="flex flex-col md:flex-row gap-gutter max-w-7xl mx-auto">
+                <div class="md:w-1/2">
+                    <h2 class="font-h2 text-h2 text-primary mb-6">Python 🐍: The Glue</h2>
+                    <p class="font-body-lg mb-8">The Swiss Army knife of DevOps. Scripting, API interaction, and custom
+                        automation.</p>
+                    <div class="p-6 bg-surface-container border-l-4 border-primary rounded-xl shadow-lg">
+                        <h4 class="font-h3 text-h3 mb-4">Why Python for DevOps?</h4>
+                        <ul class="space-y-3">
+                            <li class="flex items-center gap-2"><span
+                                    class="w-1.5 h-1.5 rounded-full bg-primary"></span> Extensive standard library</li>
+                            <li class="flex items-center gap-2"><span
+                                    class="w-1.5 h-1.5 rounded-full bg-primary"></span> Simple, readable syntax</li>
+                            <li class="flex items-center gap-2"><span
+                                    class="w-1.5 h-1.5 rounded-full bg-primary"></span> Massive ecosystem (PyPI)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="md:w-1/2">
+                    <div class="code-block p-6 rounded-xl shadow-xl">
+                        <div class="text-label-sm text-outline-variant mb-4">Check API Health</div>
+                        <pre class="font-code text-code text-on-surface">import requests
+
+def check_service(url):
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            print("Service Healthy")
+        else:
+            print(f"Warning: {response.status_code}")
+    except Exception as e:
+        print(f"Error: {e}")
+
+check_service("https://api.devops.com")</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <!-- Registration Modal -->
+    <div class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 bg-background/80 backdrop-blur-xl"
+        id="register-modal" onclick="if(event.target === this) closeModal()">
+        <div class="bg-surface-container border border-outline-variant w-full max-w-md rounded-3xl p-8 shadow-2xl relative"
+            onclick="event.stopPropagation()">
+            <button class="absolute top-6 right-6 text-on-surface-variant hover:text-primary transition-colors"
+                onclick="closeModal()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <div id="modal-content">
+                <h3 class="font-h2 text-h2 text-on-surface mb-2">Join Session</h3>
+                <p class="text-on-surface-variant mb-8">Register to receive the course materials and certificate.</p>
+                <form class="space-y-4" id="registration-form" onsubmit="handleRegistration(event)">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-label-sm mb-1">First Name</label>
+                            <input
+                                class="w-full bg-surface-container-highest border-outline-variant rounded-xl focus:ring-primary focus:border-primary px-4 py-2"
+                                id="firstName" minlength="2" placeholder="John" required="" type="text" />
+                        </div>
+                        <div>
+                            <label class="block text-label-sm mb-1">Last Name</label>
+                            <input
+                                class="w-full bg-surface-container-highest border-outline-variant rounded-xl focus:ring-primary focus:border-primary px-4 py-2"
+                                id="lastName" minlength="2" placeholder="Doe" required="" type="text" />
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-label-sm mb-1">Email Address</label>
+                        <input
+                            class="w-full bg-surface-container-highest border-outline-variant rounded-xl focus:ring-primary focus:border-primary px-4 py-2"
+                            id="email" placeholder="john@example.com" required="" type="email" />
+                    </div>
+                    <button
+                        class="w-full py-4 bg-primary-container text-on-primary-container font-h3 rounded-xl mt-4 hover:brightness-110 transition-all flex justify-center items-center gap-3 shadow-lg shadow-primary-container/30"
+                        id="submit-btn" type="submit">
+                        <span>Complete Registration</span>
+                        <div class="spinner hidden" id="loading-spinner"></div>
+                    </button>
+                </form>
+            </div>
+            <div class="hidden text-center py-12" id="success-state">
+                <div
+                    class="w-20 h-20 bg-primary/20 text-primary rounded-full flex items-center justify-center mx-auto mb-6 success-check">
+                    <span class="material-symbols-outlined text-5xl">check_circle</span>
+                </div>
+                <h3 class="font-h2 text-h2 text-on-surface mb-2">You're In!</h3>
+                <p class="text-on-surface-variant">✅ You're registered! See you at the presentation.</p>
+                <button class="mt-8 text-primary font-bold hover:underline" onclick="closeModal()">Back to
+                    presentation</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        let currentSlide = 0;
+        const totalSlides = 13;
+
+        // Topic Colors for border flow
+        const topicColors = [
+            '#f97316', // 0: Title
+            '#ffb690', // 1: Linux
+            '#a2c9ff', // 2: Networking
+            '#f97316', // 3: Git
+            '#f97316', // 4: Jenkins
+            '#a2c9ff', // 5: CI/CD
+            '#ffb690', // 6: Pipelines
+            '#00a2f4', // 7: Docker
+            '#f0f4ff', // 8: K8s
+            '#f97316', // 9: Ansible
+            '#93ccff', // 10: Terraform
+            '#f0f4ff', // 11: IaC
+            '#ffb690'  // 12: Python
+        ];
+
+        function updateIndicators() {
+            const container = document.getElementById('slide-indicators');
+            container.innerHTML = '';
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('div');
+                dot.className = `w-2 h-2 rounded-full transition-all duration-300 cursor-pointer ${i === currentSlide ? 'bg-primary shadow-[0_0_8px_rgba(255,182,144,0.8)] scale-125' : 'bg-surface-variant hover:bg-outline'}`;
+                dot.onclick = () => showSlide(i);
+                container.appendChild(dot);
+            }
+            document.getElementById('current-slide-num').innerText = (currentSlide + 1).toString().padStart(2, '0');
+
+            // Disable/Enable buttons
+            document.getElementById('prev-btn').disabled = (currentSlide === 0);
+            document.getElementById('next-btn').disabled = (currentSlide === totalSlides - 1);
+
+            // Update animated border color
+            const color = topicColors[currentSlide];
+            const nextColor = topicColors[(currentSlide + 1) % totalSlides];
+            document.getElementById('header-animated-border').style.background = `linear-gradient(90deg, ${color}, ${nextColor}, #f97316, ${color})`;
+        }
+
+        function showSlide(index) {
+            if (index < 0 || index >= totalSlides) return;
+
+            const currentActive = document.querySelector('.slide.active');
+            if (currentActive) {
+                currentActive.classList.remove('active');
+            }
+
+            currentSlide = index;
+            const nextActive = document.getElementById(`slide-${currentSlide}`);
+            nextActive.classList.add('active');
+
+            updateIndicators();
+            nextActive.scrollTop = 0;
+        }
+
+        function nextSlide() { if (currentSlide < totalSlides - 1) showSlide(currentSlide + 1); }
+        function prevSlide() { if (currentSlide > 0) showSlide(currentSlide - 1); }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            }
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                prevSlide();
+            }
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Modal Logic
+        function openModal() {
+            document.getElementById('register-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('register-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+            // Reset state after transition
+            setTimeout(() => {
+                document.getElementById('modal-content').classList.remove('hidden');
+                document.getElementById('success-state').classList.add('hidden');
+                document.getElementById('registration-form').reset();
+                document.getElementById('loading-spinner').classList.add('hidden');
+                document.getElementById('submit-btn').querySelector('span').innerText = 'Complete Registration';
+            }, 300);
+        }
+
+        async function handleRegistration(e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submit-btn');
+            const spinner = document.getElementById('loading-spinner');
+            const btnText = submitBtn.querySelector('span');
+
+            // Validation (Native HTML5 handles most but added for robustness)
+            const email = document.getElementById('email').value;
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+
+            if (firstName.length < 2 || lastName.length < 2) return;
+
+            // Loading State
+            submitBtn.disabled = true;
+            spinner.classList.remove('hidden');
+            btnText.innerText = 'Registering...';
+
+                        // Real API Call to your local Node.js server
+            try {
+                const response = await fetch('http://localhost:3001/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ firstName, lastName, email })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Registration failed.');
+                }
+
+                // Success
+                document.getElementById('modal-content').classList.add('hidden');
+                document.getElementById('success-state').classList.remove('hidden');
+            } catch (error) {
+                console.error('Registration failed:', error);
+                alert(error.message || 'Something went wrong. Please try again.');
+            } finally {
+                submitBtn.disabled = false;
+                spinner.classList.add('hidden');
+                btnText.innerText = 'Complete Registration';
+            }
+        }
+
+        // Initialize
+        updateIndicators();
+    </script>
+</body>
+
+</html>

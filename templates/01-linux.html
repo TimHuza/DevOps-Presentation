@@ -53,10 +53,58 @@ html,body{height:100%;background:var(--bg);color:var(--text);
 }
 
 /* CONTENT SLIDE */
-.s-head{
-  display:flex;align-items:center;gap:1rem;
-  padding:.9rem 2rem;background:var(--surface);
-  border-bottom:3px solid var(--accent);flex-shrink:0;
+/* CONTENT SLIDE HEADER */
+.s-head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: .9rem 2rem;
+  background: var(--surface);
+  border-bottom: 3px solid transparent;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  animation: borderAppear 3s ease-in-out forwards;
+}
+
+.s-head::before, .s-head::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    #4285F4, #34A853, #FBBC05, #EA4335, #4285F4
+  );
+  background-size: 300% 100%;
+  animation: googleFlow 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  z-index: 2;
+}
+
+/* The Glow Blur */
+.s-head::before {
+  height: 12px;
+  bottom: -4px;
+  filter: blur(12px);
+}
+
+/* The Animated Line */
+.s-head::after {
+  height: 3px;
+  bottom: 0;
+  filter: blur(.3px);
+}
+
+/* moving & fading animation */
+@keyframes googleFlow {
+  0% { background-position: 0% 50%; opacity: 1; }
+  80% { background-position: 100% 50%; opacity: 1; }
+  100% { background-position: 150% 50%; opacity: 0; visibility: hidden; }
+}
+
+@keyframes borderAppear {
+  0%, 80% { border-bottom-color: transparent; }
+  100% { border-bottom-color: var(--accent); }
 }
 .s-num{
   font-size:2rem;font-weight:900;min-width:3rem;
@@ -151,42 +199,53 @@ tr:hover td{background:rgba(249,115,22,.05)}
 }
 .sum-card .ico{font-size:1.4rem;display:block;margin-bottom:.3rem}
 
-/* nav */
-.nav{
-  position:fixed;bottom:0;left:0;right:0;height:52px;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 1.2rem;
-  background:rgba(13,17,23,.97);backdrop-filter:blur(12px);
-  border-top:1px solid var(--border);z-index:999;
+/* Linux company logo carousel */
+.linux-slider-box {
+  width: 100%;
+  max-width: 480px;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: visible;
+  margin: 1.5rem 0;
+  position: relative;
+  perspective: 1000px;
 }
-.nbtn{
-  background:var(--surface);border:1px solid var(--border);
-  color:var(--text);padding:.4rem 1.1rem;border-radius:8px;
-  font-size:.88rem;font-weight:500;cursor:pointer;transition:all .18s;
+.linux-slider-box img {
+  position: absolute;
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+  background: #fff;
+  border: 4px solid #000;
+  border-radius: 24px;
+  padding: 18px;
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  opacity: 0;
+  transform: scale(0.5) translateX(0);
+  pointer-events: none;
+  z-index: 0;
 }
-.nbtn:hover{border-color:var(--accent);color:var(--accent)}
-.nbtn:disabled{opacity:.3;cursor:not-allowed}
-.nav-mid{display:flex;align-items:center;gap:.5rem}
-.dot{
-  width:8px;height:8px;border-radius:50%;background:var(--border);
-  cursor:pointer;border:none;transition:all .2s;padding:0;
+.linux-slider-box img.active {
+  opacity: 1;
+  transform: scale(1.3) translateX(0);
+  z-index: 10;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+  pointer-events: auto;
 }
-.dot.on{background:var(--accent);transform:scale(1.5)}
-.ctr{
-  font-size:.8rem;color:var(--muted);margin-left:.4rem;min-width:50px;text-align:center
+.linux-slider-box img.prev {
+  opacity: 0.6;
+  transform: scale(0.9) translateX(-160px);
+  z-index: 5;
+  filter: grayscale(0.4);
 }
-/* per-topic accent overrides */
-.net{--accent:#06b6d4}
-.git-gh{--accent:#f43f5e}
-.jenkins{--accent:#8b5cf6}
-.cicd{--accent:#10b981}
-.pipe{--accent:#eab308}
-.docker{--accent:#3b82f6}
-.k8s{--accent:#326ce5}
-.ansible{--accent:#dc2626}
-.terraform{--accent:#844FBA}
-.iac{--accent:#14b8a6}
-.python{--accent:#ca8a04}
+.linux-slider-box img.next {
+  opacity: 0.6;
+  transform: scale(0.9) translateX(160px);
+  z-index: 5;
+  filter: grayscale(0.4);
+}
 </style>
 </head>
 <body>
@@ -214,13 +273,6 @@ tr:hover td{background:rgba(249,115,22,.05)}
           <li>📱 <strong>Software</strong> → apps, games, browsers, tools</li>
         </ul>
         <h3 style="margin-top:1rem">🏢 Big Companies That Use Linux:</h3>
-        <div class="chips" style="justify-content:flex-start;margin-top:.5rem">
-          <span class="chip">Google</span> <span class="chip">Amazon</span>
-          <span class="chip">Netflix</span> <span class="chip">Meta</span>
-          <span class="chip">Tesla</span> <span class="chip">Uber</span>
-          <span class="chip">Spotify</span>
-        </div>
-
         <div class="linux-slider-box" id="linux-logo-slider">
           <img src="static/images-slide/linux/google.png"  class="active" alt="Google">
           <img src="static/images-slide/linux/amazon.png"  alt="Amazon">
@@ -318,7 +370,7 @@ tr:hover td{background:rgba(249,115,22,.05)}
 /usr/share</code></pre>
         <div class="tip">💡 Many programs you install live here.</div>
       </div>
-      <img src="../static/images/linux/files.png" alt="Linux Files" class="cols">
+      <img src="../static/images/linux/files.png" alt="Linux Files" class="cols" style="max-height: 400px;">
     </div>
   </div>
 </section>
@@ -385,7 +437,7 @@ cd project</code></pre>
           <li>Important for security in DevOps</li>
         </ul>
       </div>
-      <img src="../static/images/linux/users-groups.png" alt="Users and Groups">
+      <img src="../static/images/linux/users-groups.png" alt="Users and Groups" style="max-height: 400px;">
     </div>
   </div>
 </section>
@@ -432,7 +484,7 @@ cd project</code></pre>
           <li>Essential for secure DevOps pipelines</li>
         </ul>
       </div>
-      <img src="../static/images/linux/chmod.png" alt="chmod">
+      <img src="../static/images/linux/chmod.png" alt="chmod" style="max-height: 400px;">
     </div>
   </div>
 </section>
@@ -511,31 +563,28 @@ document.addEventListener('keydown', e => {
 go(0);
 
 document.addEventListener("DOMContentLoaded", function () {
+    const box = document.getElementById('linux-logo-slider');
+    if (!box) return;
+    const imgs = Array.from(box.querySelectorAll('img'));
+    if (imgs.length < 3) return;
 
-    const images = [
-        "static/images-slide/linux/amazon.png",
-        "static/images-slide/linux/google.png",
-        "static/images-slide/linux/meta.png",
-        "static/images-slide/linux/netflix.png",
-        "static/images-slide/linux/spotify.png",
-        "static/images-slide/linux/tesla.png",
-        "static/images-slide/linux/uber.png"
-    ];
-
-    let index = 0;
-    const logo = document.getElementById("linuxLogo");
-
-    setInterval(() => {
-        logo.style.opacity = 0;
-
-        setTimeout(() => {
-            index = (index + 1) % images.length;
-            logo.src = images[index];
-            logo.style.opacity = 1;
-        }, 400);
-
-    }, 3000);
-
+    let idx = 0;
+    function update() {
+      imgs.forEach(img => img.classList.remove('active', 'prev', 'next'));
+      
+      const prevIdx = (idx - 1 + imgs.length) % imgs.length;
+      const activeIdx = idx;
+      const nextIdx = (idx + 1) % imgs.length;
+      
+      imgs[prevIdx].classList.add('prev');
+      imgs[activeIdx].classList.add('active');
+      imgs[nextIdx].classList.add('next');
+      
+      idx = (idx + 1) % imgs.length;
+    }
+    
+    update();
+    setInterval(update, 3000);
 });
 </script>
 </body>

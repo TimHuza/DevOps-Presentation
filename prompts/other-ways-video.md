@@ -1,0 +1,2 @@
+For my presentation about DevOps I have mutliple topics and there is summary for each topic. I have an idea to make a AI generated video that summarizes what topic is about. The video should be 5-20 seconds long and summarize the topic. But there is limited AI generation models and I will only make for maximum 3 topics, and I have 12 topics in total.
+Is there any other ways to make it more interesting and keep the presentation more interactive? Maybe the video not AI generated maybe something else for summarizing the topic?
