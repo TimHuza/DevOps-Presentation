@@ -76,19 +76,24 @@ async function sendInvitation(toEmail, firstName) {
       // Resend onboarding sender is "onboarding@resend.dev" by default
       const fromEmail = process.env.SMTP_FROM || 'onboarding@resend.dev';
       
+      const payload = {
+        from: fromEmail,
+        to: toEmail,
+        subject: "You're Invited: DevOps Presentation",
+        html: htmlContent,
+      };
+
+      if (attachments && attachments.length > 0) {
+        payload.attachments = attachments;
+      }
+
       const response = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          from: fromEmail,
-          to: toEmail,
-          subject: "You're Invited: DevOps Presentation",
-          html: htmlContent,
-          attachments: attachments
-        })
+        body: JSON.stringify(payload)
       });
 
       const resData = await response.json();
