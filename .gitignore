@@ -1,3 +1,9 @@
 server/node_modules
 
 server/.env
+
+venv/
+
+.env
+*.pickle
+client_secret.json

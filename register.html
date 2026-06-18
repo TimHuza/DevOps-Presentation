@@ -733,7 +733,7 @@ check_service("https://api.devops.com")</pre>
                 <form class="space-y-4" id="registration-form" onsubmit="handleRegistration(event)">
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-label-sm mb-1">First Name</label>
+                            <label for="userName" class="block text-label-sm mb-1">First Name</label>
                             <input
                                 class="w-full bg-surface-container-highest border-outline-variant rounded-xl focus:ring-primary focus:border-primary px-4 py-2"
                                 id="firstName" minlength="2" placeholder="John" required="" type="text" />
@@ -746,7 +746,7 @@ check_service("https://api.devops.com")</pre>
                         </div>
                     </div>
                     <div>
-                        <label class="block text-label-sm mb-1">Email Address</label>
+                        <label for="userEmail" class="block text-label-sm mb-1">Email Address</label>
                         <input
                             class="w-full bg-surface-container-highest border-outline-variant rounded-xl focus:ring-primary focus:border-primary px-4 py-2"
                             id="email" placeholder="john@example.com" required="" type="email" />
@@ -884,7 +884,7 @@ check_service("https://api.devops.com")</pre>
 
                         // Real API Call to your local Node.js server
             try {
-                const response = await fetch('/api/register', {
+                const response = await fetch('https://script.google.com/macros/s/AKfycbz_v1rgCWl0HdJfqv2qcSgh_qffEp3TLXt5Q-SsJxdt139bWzNc81-Z5G4ElD_Kc_bV/exec', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -913,7 +913,8 @@ check_service("https://api.devops.com")</pre>
 
         // Initialize
         updateIndicators();
+
+        
     </script>
 </body>
-
 </html>
