@@ -719,22 +719,6 @@ check_service("https://api.devops.com")</pre>
         </section>
     </main>
 
-    <!-- Bottom Navigation -->
-    <nav class="fixed bottom-0 left-0 w-full z-40 bg-background/80 glass-nav flex justify-between items-center px-safe-margin h-20">
-        <button id="prev-btn" onclick="prevSlide()" class="flex items-center gap-2 px-4 py-2 rounded-xl border border-outline-variant hover:bg-surface-variant disabled:opacity-50 disabled:pointer-events-none transition-colors">
-            <span class="material-symbols-outlined">arrow_back</span>
-            <span>Back</span>
-        </button>
-        <div class="flex items-center gap-6">
-            <div id="slide-indicators" class="flex gap-2"></div>
-            <span id="current-slide-num" class="font-code text-on-surface-variant text-label-sm">01</span>
-        </div>
-        <button id="next-btn" onclick="nextSlide()" class="flex items-center gap-2 px-4 py-2 rounded-xl border border-outline-variant hover:bg-surface-variant disabled:opacity-50 disabled:pointer-events-none transition-colors">
-            <span>Next</span>
-            <span class="material-symbols-outlined">arrow_forward</span>
-        </button>
-    </nav>
-
     <!-- Registration Modal -->
     <div class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 bg-background/80 backdrop-blur-xl"
         id="register-modal" onclick="if(event.target === this) closeModal()">
